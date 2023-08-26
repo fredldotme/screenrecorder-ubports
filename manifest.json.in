@@ -1,0 +1,15 @@
+{
+    "name": "screenrecorder.ubports",
+    "description": "Record video sessions of your screen",
+    "architecture": "@CLICK_ARCH@",
+    "title": "Screen recorder",
+    "hooks": {
+        "screenrecorder": {
+            "apparmor": "screenrecorder.apparmor",
+            "desktop":  "screenrecorder.desktop"
+        }
+    },
+    "version": "1.0.0",
+    "maintainer": "UBports Foundation <dev@ubports.com>",
+    "framework" : "@CLICK_FRAMEWORK@"
+}

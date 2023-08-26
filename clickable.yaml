@@ -1,0 +1,8 @@
+clickable_minimum_required: 7.1.2
+builder: cmake
+kill: screenrecorder
+framework: ubuntu-sdk-20.04
+dependencies_target:
+- libmirclient-dev
+- libmedia-dev
+- android-headers-29
