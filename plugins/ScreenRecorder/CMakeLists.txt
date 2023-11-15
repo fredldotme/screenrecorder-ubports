@@ -1,12 +1,20 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(PLUGIN "Example")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(PLUGIN "Controller")
 
 set(
     SRC
+    captures/capture.h
+    encoders/encoder.h
+    muxers/mux.h
     plugin.cpp
-    example.cpp
-    screencast.cpp
-    h264encoder.cpp
+    controller.cpp
+    buffer.cpp
+    bufferqueue.cpp
+    encoders/android_h264.cpp
+    captures/mir.cpp
+    muxers/mp4.cpp
+    screen_recorder.cpp
+    indicator.cpp
 )
 
 set(CMAKE_AUTOMOC ON)
@@ -15,11 +23,23 @@ include_directories(
   ${HYBRIS_MEDIA_INCLDUE_DIRS}
   ${ANDROID_HEADERS_INCLUDE_DIRS}
   ${MIRCLIENT_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${LOMIRIURLDISPATCHER_INCLUDE_DIRS}
 )
 
 
 add_library(${PLUGIN} MODULE ${SRC})
 set_target_properties(${PLUGIN} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PLUGIN})
+target_link_libraries(${PLUGIN}
+  ${HYBRIS_MEDIA_LDFLAGS}
+  ${HYBRIS_MEDIA_LIBRARIES}
+  ${MIRCLIENT_LDFLAGS}
+  ${MIRCLIENT_LIBRARIES}
+  ${GLIB_LDFLAGS}
+  ${GLIB_LIBRARIES}
+  ${LOMIRIURLDISPATCHER_LDFLAGS}
+  ${LOMIRIURLDISPATCHER_LIBRARIES}
+)
 qt5_use_modules(${PLUGIN} Qml Quick DBus)
 
 execute_process(

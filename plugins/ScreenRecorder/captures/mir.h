@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 UBports Foundation.
+ * Copyright (C) 2023 Maciej Sopyło
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 3, as published
@@ -15,36 +15,37 @@
  *
  */
 
-#ifndef AC_MIR_CONNECTOR_H_
-#define AC_MIR_CONNECTOR_H_
+#ifndef CAPTURES_MIR_H
+#define CAPTURES_MIR_H
 
 #include <QObject>
-
-#include <memory>
+#include "capture.h"
 
 #include <mir_toolkit/mir_client_library.h>
 #include <mir_toolkit/mir_screencast.h>
 #include <mir_toolkit/mir_buffer_stream.h>
 
-class Screencast : public QObject {
+class CaptureMir : public QObject, public Capture
+{
     Q_OBJECT
+    Q_INTERFACES(Capture)
 public:
-    explicit Screencast();
-    ~Screencast();
-
-    bool Setup();
-    bool Stop();
-
-    void SwapBuffers();
-    void* CurrentBuffer() const;
+    using QObject::QObject;
+    ~CaptureMir();
+    void setSemaphore(const QSharedPointer<QSemaphore> semaphore) override;
+Q_SIGNALS:
+    void started(int width, int height, double framerate) override;
+    void bufferAvailable(const Buffer::Ptr &buffer) override;
+public Q_SLOTS:
+    void start() override;
+    void stop() override;
+    void swapBuffers() override;
 
 private:
-    MirConnection *connection_;
-    MirScreencast *screencast_;
-    MirBufferStream *buffer_stream_;
-
-signals:
-    void screencastStarted(int width, int height, int refresh_rate);
+    MirConnection *m_connection = nullptr;
+    MirScreencast *m_screencast = nullptr;
+    MirBufferStream *m_bufferStream = nullptr;
+    QSharedPointer<QSemaphore> m_semaphore;
 };
 
-#endif
+#endif // CAPTURES_MIR_H
