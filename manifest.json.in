@@ -6,7 +6,8 @@
     "hooks": {
         "screenrecorder": {
             "apparmor": "screenrecorder.apparmor",
-            "desktop":  "screenrecorder.desktop"
+            "desktop":  "screenrecorder.desktop",
+            "urls": "screenrecorder-urldispatcher.json"
         }
     },
     "version": "1.0.0",

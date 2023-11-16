@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(screenrecorder C CXX)
-
+ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 # Automatically create moc files
 set(CMAKE_AUTOMOC ON)
 
@@ -13,6 +13,12 @@ find_package(Qt5QuickControls2 REQUIRED)
 pkg_check_modules(MIRCLIENT REQUIRED mirclient)
 pkg_check_modules(HYBRIS_MEDIA REQUIRED libmedia)
 pkg_check_modules(ANDROID_HEADERS REQUIRED android-headers-29)
+pkg_check_modules(LOMIRIURLDISPATCHER REQUIRED lomiri-url-dispatcher)
+#pkg_check_modules(MESSAGING_MENU REQUIRED messaging-menu)
+pkg_check_modules(GLIB REQUIRED
+    gio-unix-2.0>=2.36
+    glib-2.0>=2.36
+)
 
 execute_process(
     COMMAND dpkg-architecture -qDEB_HOST_MULTIARCH
@@ -48,13 +54,14 @@ endif()
 configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.json DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(FILES ${PROJECT_NAME}.apparmor DESTINATION ${DATA_DIR})
+install(FILES ${PROJECT_NAME}-urldispatcher.json DESTINATION ${DATA_DIR})
 install(FILES assets/logo.svg DESTINATION assets)
 
 qt5_add_resources(QT_RESOURCES qml/qml.qrc)
 qt5_add_resources(QT_RESOURCES assets/assets.qrc)
 add_executable(${PROJECT_NAME} main.cpp ${QT_RESOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
-target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::Qml Qt5::Quick Qt5::QuickControls2)
+target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::Qml Qt5::Quick Qt5::QuickControls2 mirclient mircookie mircore)
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Translations

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: screenrecorder.ubports\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-21 19:18+0000\n"
+"POT-Creation-Date: 2023-11-15 16:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,14 +17,28 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../qml/Main.qml:39 screenrecorder.desktop.in.h:1
+#: ../qml/Main.qml:102 screenrecorder.desktop.in.h:1
 msgid "Screen recorder"
 msgstr ""
 
-#: ../qml/Main.qml:59
-msgid "Press the button below and check the logs!"
+#: ../qml/Main.qml:118
+msgid ""
+"The recording indicator will not show up until you restart your device or "
+"Lomiri once."
 msgstr ""
 
-#: ../qml/Main.qml:64
-msgid "Press here!"
+#: ../qml/Main.qml:124
+msgid "Resolution scale (not working atm):"
+msgstr ""
+
+#: ../qml/Main.qml:163
+msgid "Framerate:"
+msgstr ""
+
+#: ../qml/Main.qml:202
+msgid "Start recording"
+msgstr ""
+
+#: ../qml/Main.qml:210
+msgid "Stop recording"
 msgstr ""

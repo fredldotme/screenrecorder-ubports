@@ -6,3 +6,8 @@ dependencies_target:
 - libmirclient-dev
 - libmedia-dev
 - android-headers-29
+- libhybris-dev
+- libavformat-dev
+- libmessaging-menu-dev
+- liblomiri-url-dispatcher-dev
+skip_review: true

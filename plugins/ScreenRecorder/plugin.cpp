@@ -16,11 +16,17 @@
 
 #include <QtQml>
 #include <QtQml/QQmlContext>
+#include <QMetaType>
 
 #include "plugin.h"
-#include "example.h"
+#include "controller.h"
+#include "buffer.h"
 
-void ExamplePlugin::registerTypes(const char *uri) {
-    //@uri Example
-    qmlRegisterSingletonType<Example>(uri, 1, 0, "Example", [](QQmlEngine*, QJSEngine*) -> QObject* { return new Example; });
+void ExamplePlugin::registerTypes(const char *uri)
+{
+    qRegisterMetaType<Buffer::Ptr>();
+    //@uri Controller
+    qmlRegisterSingletonType<Controller>(
+            uri, 1, 0, "Controller",
+            [](QQmlEngine *, QJSEngine *) -> QObject * { return new Controller; });
 }

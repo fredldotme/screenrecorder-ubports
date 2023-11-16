@@ -14,19 +14,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EXAMPLE_H
-#define EXAMPLE_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include <QObject>
+#include <QPointer>
+#include <memory>
+#include "encoders/android_h264.h"
+#include "captures/mir.h"
+#include "muxers/mp4.h"
+#include "screen_recorder.h"
 
-class Example: public QObject {
+class Controller : public QObject
+{
     Q_OBJECT
 
 public:
-    Example();
-    ~Example() = default;
+    Controller();
+    ~Controller();
 
-    Q_INVOKABLE void speak();
+    Q_INVOKABLE void start(unsigned int width, unsigned int height, float scale, float framerate);
+    Q_INVOKABLE void stop();
+
+private:
+    QSharedPointer<AndroidH264Encoder> m_encoder;
+    QSharedPointer<CaptureMir> m_capture;
+    QSharedPointer<MuxMp4> m_mux;
+    ScreenRecorder m_recorder;
 };
 
-#endif
+#endif // CONTROLLER_H
