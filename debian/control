@@ -1,0 +1,35 @@
+Source: lomiri-screen-recorder
+Priority: optional
+Section: admin
+Maintainer: Alfred Neumayer <dev.beidl@gmail.com>
+Build-Depends: debhelper (>= 9),
+               android-headers,
+               cmake,
+               qtbase5-dev,
+               qtdeclarative5-dev,
+               qtquickcontrols2-5-dev,
+               libdeviceinfo-dev,
+               libgbinder-dev,
+               libglib2.0-dev,
+               libgtest-dev,
+               libmirclient-dev,
+               libmedia-dev,
+               libhybris-dev,
+               libavformat-dev,
+               libmessaging-menu-dev,
+               liblomiri-url-dispatcher-dev,
+               pkg-config,
+               intltool
+Standards-Version: 3.9.7
+Homepage: https://ubports.com
+Vcs-Git: https://gitlab.com/ubports/development/apps/lomiri-screen-recorder
+
+Package: lomiri-screen-recorder
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: Screen recorder app for Ubuntu Touch
+ Allows recording the screen of an Ubuntu Touch device.
+ .
+ This package contains the screen recorder app.
+
