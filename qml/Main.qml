@@ -99,7 +99,7 @@ MainView {
             title: i18n.tr("Screen recorder")
             StyleHints {
                 foregroundColor: "white"
-                backgroundColor: "darkblue"
+                backgroundColor: "#213d3d"
                 dividerColor: "transparent"
             }
         }
@@ -110,8 +110,8 @@ MainView {
             horizontalOffset: 0 - (parent.width / 3)
             verticalOffset: parent.height - (parent.height / 3)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "lightblue" }
-                GradientStop { position: 0.88; color: "darkblue" }
+                GradientStop { position: 0.0; color: "#2b6f6f" }
+                GradientStop { position: 0.88; color: "#213d3d" }
             }
         }
 
