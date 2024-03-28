@@ -45,10 +45,17 @@ void Controller::start(unsigned int width, unsigned int height, float scale, flo
     m_encoder->configure(config);
 
     auto dir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    {
+        QDir target(dir);
+        if (!target.exists())
+            target.mkpath(dir);
+    }
 
-    m_mux->start(dir.append("/screen_recording_")
+    m_fileName = dir.append("/screen_recording_")
                          .append(QDateTime::currentDateTime().toString("yyyy_MM_dd__hh_mm_ss_zzz"))
-                         .append(".mp4"));
+                         .append(".mp4");
+
+    m_mux->start(m_fileName, width, height);
     m_recorder.start(framerate);
 }
 
@@ -56,4 +63,5 @@ void Controller::stop()
 {
     m_recorder.stop();
     m_mux->stop();
+    Q_EMIT fileSaved(m_fileName);
 }

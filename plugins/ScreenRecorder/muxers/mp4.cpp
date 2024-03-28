@@ -35,7 +35,7 @@ static int write_callback(int64_t offset, const void *buffer, size_t size, void 
     return file->write((const char *)buffer, size) != size;
 }
 
-void MuxMp4::start(const QString fileName)
+void MuxMp4::start(const QString fileName, const int width, const int height)
 {
     m_file.setFileName(fileName);
     m_file.open(QIODevice::WriteOnly);
@@ -43,7 +43,7 @@ void MuxMp4::start(const QString fileName)
 
     qDebug() << "before mp4_h26x_write_init";
 
-    if (MP4E_STATUS_OK != mp4_h26x_write_init(&m_mp4wr, m_mux, 1080, 2340, 0)) {
+    if (MP4E_STATUS_OK != mp4_h26x_write_init(&m_mp4wr, m_mux, width, height, 0)) {
         qCritical() << "mp4_h26x_write_init failed";
         throw std::runtime_error("mp4_h26x_write_init failed");
     }

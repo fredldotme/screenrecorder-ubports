@@ -36,11 +36,15 @@ public:
     Q_INVOKABLE void start(unsigned int width, unsigned int height, float scale, float framerate);
     Q_INVOKABLE void stop();
 
+Q_SIGNALS:
+    void fileSaved(const QString path);
+
 private:
     QSharedPointer<AndroidH264Encoder> m_encoder;
     QSharedPointer<CaptureMir> m_capture;
     QSharedPointer<MuxMp4> m_mux;
     ScreenRecorder m_recorder;
+    QString m_fileName;
 };
 
 #endif // CONTROLLER_H

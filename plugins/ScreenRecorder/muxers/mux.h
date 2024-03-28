@@ -29,7 +29,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     virtual void addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig) = 0;
-    virtual void start(const QString fileName) = 0;
+    virtual void start(const QString fileName, const int width, const int height) = 0;
     virtual void stop() = 0;
 };
 

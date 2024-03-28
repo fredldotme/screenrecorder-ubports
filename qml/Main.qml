@@ -18,9 +18,11 @@
 import QtQuick 2.7
 import Lomiri.Components 1.3
 import Lomiri.Components.Pickers 1.0
+import Lomiri.Content 1.1
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.12
+import QtGraphicalEffects 1.12
 import Qt.labs.settings 1.0
 import GSettings 1.0
 import Controller 1.0
@@ -67,13 +69,13 @@ MainView {
         }
 
         function startRecording() {
-            indicator.running = true;
+            recordingButton.recording = true;
             d.setAppLifecycleExemption();
-            Controller.start(Screen.width, Screen.height, 1.0/*resolution.checkedButton.value*/, fps.checkedButton.value);
+            Controller.start(Screen.width, Screen.height, 1.0/*resolution.checkedButton.value*/, 30/*fps.checkedButton.value*/);
         }
 
         function stopRecording() {
-            indicator.running = false;
+            recordingButton.recording = false;
             Controller.stop();
             d.unsetAppLifecycleExemption();
         }
@@ -89,11 +91,28 @@ MainView {
     }
 
     Page {
+        id: mainPage
         anchors.fill: parent
 
         header: PageHeader {
             id: header
             title: i18n.tr("Screen recorder")
+            StyleHints {
+                foregroundColor: "white"
+                backgroundColor: "darkblue"
+                dividerColor: "transparent"
+            }
+        }
+
+        RadialGradient {
+            anchors.fill: parent
+            angle: 45
+            horizontalOffset: 0 - (parent.width / 3)
+            verticalOffset: parent.height - (parent.height / 3)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "lightblue" }
+                GradientStop { position: 0.88; color: "darkblue" }
+            }
         }
 
         ColumnLayout {
@@ -111,11 +130,14 @@ MainView {
             Label {
                 text: i18n.tr("The recording indicator will not show up until you restart your device or Lomiri once.")
                 wrapMode: Text.WordWrap
+                color: "white"
                 Layout.fillWidth: true
             }
 
+/*
             Label {
                 text: i18n.tr("Resolution scale (not working atm):")
+                color: "white"
                 Layout.fillWidth: true
             }
 
@@ -155,6 +177,7 @@ MainView {
 
             Label {
                 text: i18n.tr("Framerate:")
+                color: "white"
                 Layout.fillWidth: true
             }
 
@@ -177,37 +200,92 @@ MainView {
                     text: "60"
                 }
             }
-
-            BusyIndicator {
-                id: indicator
-                running: false
-                visible: running
-            }
+*/
 
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
                 spacing: units.gu(1)
 
-                Button {
-                    Layout.alignment: Qt.AlignHCenter
+                Rectangle {
+                    id: recordingButton
+                    color: recordingButtonMouseArea.pressed ? "#77FF0000" : !recording ? "#99FF0000" :  "#FFFF0000"
+                    width: units.gu(16)
+                    height: width
+                    radius: width / 2
+                    border.color: "darkred"
+                    border.width: units.gu(0.5)
+                    Behavior on color { ColorAnimation { duration: 100 } }
 
-                    // probably expose recording status from ScreenRecorder?
-                    enabled: !indicator.running
-                    text: i18n.tr("Start recording")
-                    onClicked: d.startRecording()
-                }
+                    property bool recording : false
 
-                Button {
-                    Layout.alignment: Qt.AlignHCenter
+                    BusyIndicator {
+                        id: indicator
+                        running: recordingButton.recording
+                        visible: running
+                        anchors.centerIn: parent
+                    }
 
-                    enabled: indicator.running
-                    text: i18n.tr("Stop recording")
-                    onClicked: d.stopRecording()
+                    MouseArea {
+                        id: recordingButtonMouseArea
+                        anchors.fill: parent
+                        onClicked: {
+                            if (!recordingButton.recording)
+                                d.startRecording()
+                            else
+                                d.stopRecording()
+                        }
+                    }
                 }
             }
 
             Item {
                 Layout.fillHeight: true
+            }
+        }
+
+        ContentPeerPicker {
+            id: picker
+            anchors.fill: parent
+            visible: false
+            showTitle: false
+            contentType: ContentType.Videos
+            handler: ContentHandler.Destination
+
+            property var activeTransfer : null
+            property string targetUrl : ""
+
+            ContentItem {
+                id: contentItem
+            }
+
+            onPeerSelected: {
+                peer.selectionType = ContentTransfer.Single
+                picker.activeTransfer = peer.request()
+                picker.activeTransfer.stateChanged.connect(function() {
+                    if (picker.activeTransfer.state === ContentTransfer.InProgress) {
+                        console.log("In progress");
+                        contentItem.url = picker.targetUrl
+                        contentItem.text = "recording_" + Date.now() + ".mp4"
+                        console.log("Transfering: " + contentItem.url + " " + contentItem.text)
+                        picker.activeTransfer.items = new Array
+                        picker.activeTransfer.items.push(contentItem)
+                        picker.activeTransfer.state = ContentTransfer.Charged;
+                    }
+                    if (picker.activeTransfer.state === ContentTransfer.Charged) {
+                        console.log("Charged");
+                        picker.activeTransfer = null
+                    }
+                })
+                picker.visible = false
+            }
+        }
+
+        Connections {
+            target: Controller
+
+            onFileSaved: {
+                picker.targetUrl = "file://" + path
+                picker.visible = true
             }
         }
     }

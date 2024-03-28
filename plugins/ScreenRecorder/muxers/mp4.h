@@ -36,7 +36,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig) override;
-    void start(const QString fileName) override;
+    void start(const QString fileName, const int width, const int height) override;
     void stop() override;
 
 private:

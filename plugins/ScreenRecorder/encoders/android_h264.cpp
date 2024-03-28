@@ -33,9 +33,9 @@ static constexpr int32_t kOMXVideoIntraRefreshCyclic = 0;
 static constexpr int32_t kOMXVideoControlRateConstant = 2;
 // Supplying -1 as framerate means the encoder decides on which framerate
 // it provides.
-static constexpr int32_t kAnyFramerate = -1;
-// Default is a bitrate of 5 MBit/s
-static constexpr int32_t kDefaultBitrate = 5000000;
+static constexpr int32_t kAnyFramerate = 30;
+// Default is a bitrate of 15 MBit/s
+static constexpr int32_t kDefaultBitrate = 15000000;
 // By default send an I frame every 15 seconds which is the
 // same Android currently configures in its WiFi Display code path.
 static constexpr std::chrono::seconds kDefaultIFrameInterval{ 15 };
@@ -147,14 +147,14 @@ void AndroidH264Encoder::configure(const Config &config)
     m_format->bitrate(config.bitrate);
     m_format->bitrateMode(kOMXVideoControlRateConstant);
     m_format->framerate(config.framerate);
-    m_format->intraRefreshMode(0);
+    //m_format->intraRefreshMode(kOMXVideoIntraRefreshCyclic);
 
     // Update macroblocks in a cyclic fashion with 10% of all MBs within
     // frame gets updated at one time. It takes about 10 frames to
     // completely update a whole video frame. If the frame rate is 30,
     // it takes about 333 ms in the best case (if next frame is not an IDR)
     // to recover from a lost/corrupted packet.
-    const int32_t mbs = (((config.width + 15) / 16) * ((config.height + 15) / 16) * 10) / 100;
+    const int32_t mbs = (((config.width + 15) / 16) * ((config.height + 15) / 16) * 100) / 100;
     m_format->intraRefreshCIRMbs(mbs);
 
     if (config.i_frame_interval > 0) {
