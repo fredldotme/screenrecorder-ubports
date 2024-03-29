@@ -5,3 +5,6 @@ Icon=lomiri-screen-recorder
 Terminal=false
 Type=Application
 X-Lomiri-Touch=true
+X-Lomiri-Splash-Image=/usr/share/lomiri-screen-recorder/splash.png
+X-Lomiri-Splash-Show-Header=false
+X-Lomiri-Splash-Color=#213d3d
