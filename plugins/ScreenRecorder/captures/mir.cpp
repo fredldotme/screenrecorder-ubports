@@ -135,7 +135,7 @@ void CaptureMir::start()
         return;
     }
 
-    m_elapsed.start();
+    m_elapsed.restart();
 
     qDebug() << "started mir capture";
     Q_EMIT started(displayMode->horizontal_resolution, displayMode->vertical_resolution,
