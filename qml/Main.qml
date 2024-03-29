@@ -25,7 +25,7 @@ import QtQuick.Window 2.12
 import QtGraphicalEffects 1.12
 import Qt.labs.settings 1.0
 import GSettings 1.0
-import Controller 1.0
+import LomiriScreenRecordController 1.0
 
 MainView {
     id: root

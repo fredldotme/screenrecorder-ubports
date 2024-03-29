@@ -1,0 +1,13 @@
+[Indicator%20Service]
+Name=screenrecorder
+ObjectPath=/ubports/screenrecorder/indicator
+Position=0
+
+[desktop]
+ObjectPath=/ubports/screenrecorder/indicator/actions_1
+
+[greeter]
+ObjectPath=/ubports/screenrecorder/indicator/actions_1
+
+[phone]
+ObjectPath=/ubports/screenrecorder/indicator/actions_1

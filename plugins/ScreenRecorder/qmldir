@@ -1,2 +1,2 @@
-module Controller
-plugin Controller
+module LomiriScreenRecordController
+plugin LomiriScreenRecordController

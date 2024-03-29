@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(screenrecorder C CXX)
+project(lomiri-screen-recorder C CXX)
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 # Automatically create moc files
 set(CMAKE_AUTOMOC ON)
+
+option(CLICK_MODE "Installs to a contained location" ON)
 
 find_package(PkgConfig)
 find_package(Qt5Core REQUIRED)
@@ -25,12 +27,21 @@ execute_process(
     OUTPUT_VARIABLE ARCH_TRIPLET
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-set(QT_IMPORTS_DIR "lib/${ARCH_TRIPLET}")
 
-set(PROJECT_NAME "screenrecorder")
-set(FULL_PROJECT_NAME "screenrecorder.ubports")
-set(DATA_DIR /)
-set(DESKTOP_FILE_NAME ${PROJECT_NAME}.desktop)
+if(CLICK_MODE)
+    set(QT_IMPORTS_DIR "lib/${ARCH_TRIPLET}")
+    set(PROJECT_NAME "screenrecorder")
+    set(FULL_PROJECT_NAME "screenrecorder.ubports")
+    set(DATA_DIR /)
+    set(DESKTOP_FILE_NAME screenrecorder.desktop)
+    ADD_DEFINITIONS(-DCLICK_MODE)
+else()
+    set(QT_IMPORTS_DIR "${CMAKE_INSTALL_LIBDIR}/qt5/qml")
+    set(PROJECT_NAME "lomiri-screen-recorder")
+    set(FULL_PROJECT_NAME "screenrecorder.ubports")
+    set(DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/applications")
+    set(DESKTOP_FILE_NAME lomiri-screen-recorder.desktop)
+endif()
 
 # This command figures out the minimum SDK framework for use in the manifest
 # file via the environment variable provided by Clickable or sets a default value otherwise.
@@ -51,18 +62,24 @@ else()
     )
 endif()
 
-configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.json DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(FILES ${PROJECT_NAME}.apparmor DESTINATION ${DATA_DIR})
-install(FILES ${PROJECT_NAME}-urldispatcher.json DESTINATION ${DATA_DIR})
-install(FILES assets/logo.png DESTINATION assets)
+if (CLICK_MODE)
+    configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.json DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(FILES ${PROJECT_NAME}.apparmor DESTINATION ${DATA_DIR})
+    install(FILES ${PROJECT_NAME}-urldispatcher.json DESTINATION ${DATA_DIR})
+    install(FILES assets/logo.png DESTINATION assets)
+else()
+    install(FILES assets/logo.png DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/512x512/apps" RENAME lomiri-screen-recorder.png)
+    install(FILES lomiri-screen-recorder.indicator DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ayatana/indicators" RENAME "ubports.screenrecorder.indicator")
+    install(FILES screenrecorder-urldispatcher.json DESTINATION "${CMAKE_INSTALL_PREFIX}/share/lomiri-url-dispatcher/urls" RENAME "lomiri-screen-recorder.url-dispatcher")
+endif()
 
 qt5_add_resources(QT_RESOURCES qml/qml.qrc)
 qt5_add_resources(QT_RESOURCES assets/assets.qrc)
 add_executable(${PROJECT_NAME} main.cpp ${QT_RESOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
 target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::Qml Qt5::Quick Qt5::QuickControls2 mirclient mircookie mircore)
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 # Translations
 file(GLOB_RECURSE I18N_SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/po qml/*.qml qml/*.js)

@@ -1,7 +1,7 @@
 [Desktop Entry]
 _Name=Screen recorder
-Exec=bin/screenrecorder %U
-Icon=assets/logo.png
+Exec=lomiri-screen-recorder %U
+Icon=lomiri-screen-recorder
 Terminal=false
 Type=Application
 X-Lomiri-Touch=true

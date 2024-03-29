@@ -70,6 +70,7 @@ void Indicator::stop()
 
 void Indicator::enable()
 {
+#ifdef CLICK_MODE
     // TODO: remove once Lomiri does that itself
     QDir().mkpath(QFileInfo(INDICATOR_PATH).dir().absolutePath());
     QSettings config(INDICATOR_PATH, QSettings::IniFormat);
@@ -88,12 +89,15 @@ void Indicator::enable()
     config.beginGroup("greeter");
     config.setValue("ObjectPath", path);
     config.endGroup();
+#endif
 }
 
 void Indicator::disable()
 {
+#ifdef CLICK_MODE
     QFile config(INDICATOR_PATH);
     config.remove();
+#endif
 }
 
 void Indicator::onBusAqcuired(GDBusConnection *connection, const gchar *name)

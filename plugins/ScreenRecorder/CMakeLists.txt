@@ -1,5 +1,5 @@
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-set(PLUGIN "Controller")
+set(PLUGIN "LomiriScreenRecordController")
 
 set(
     SRC
@@ -47,8 +47,6 @@ execute_process(
     OUTPUT_VARIABLE ARCH_TRIPLET
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-
-set(QT_IMPORTS_DIR "/lib/${ARCH_TRIPLET}")
 
 install(TARGETS ${PLUGIN} DESTINATION ${QT_IMPORTS_DIR}/${PLUGIN}/)
 install(FILES qmldir DESTINATION ${QT_IMPORTS_DIR}/${PLUGIN}/)
