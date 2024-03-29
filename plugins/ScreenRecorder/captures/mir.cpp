@@ -135,6 +135,8 @@ void CaptureMir::start()
         return;
     }
 
+    m_elapsed.start();
+
     qDebug() << "started mir capture";
     Q_EMIT started(displayMode->horizontal_resolution, displayMode->vertical_resolution,
                    displayMode->refresh_rate);
@@ -148,6 +150,7 @@ void CaptureMir::stop()
 
     m_screencast = nullptr;
     m_bufferStream = nullptr;
+    m_elapsed.invalidate();
 }
 
 void CaptureMir::swapBuffers()
@@ -162,7 +165,8 @@ void CaptureMir::swapBuffers()
     mir_buffer_stream_swap_buffers_sync(m_bufferStream);
     MirNativeBuffer *buffer = nullptr;
     mir_buffer_stream_get_current_buffer(m_bufferStream, &buffer);
+
     const auto wrappedBuffer = Buffer::Create(reinterpret_cast<void *>(buffer));
-    wrappedBuffer->SetTimestamp(0);
+    wrappedBuffer->SetTimestamp(m_elapsed.elapsed() * 1000);
     Q_EMIT bufferAvailable(wrappedBuffer);
 }

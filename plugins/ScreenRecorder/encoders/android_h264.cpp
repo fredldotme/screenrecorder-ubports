@@ -36,9 +36,6 @@ static constexpr int32_t kOMXVideoControlRateConstant = 2;
 static constexpr int32_t kAnyFramerate = 30;
 // Default is a bitrate of 25 MBit/s
 static constexpr int32_t kDefaultBitrate = 25000000;
-// By default send an I frame every 15 seconds which is the
-// same Android currently configures in its WiFi Display code path.
-static constexpr std::chrono::seconds kDefaultIFrameInterval{ 15 };
 // From frameworks/av/include/media/stagefright/MediaErrors.h
 enum AndroidMediaError {
     kAndroidMediaErrorBase = -1000,
@@ -218,8 +215,10 @@ AndroidH264Encoder::Config AndroidH264Encoder::defaultConfig()
     Config config;
     config.framerate = kAnyFramerate;
     config.bitrate = kDefaultBitrate;
-    config.i_frame_interval = kDefaultIFrameInterval.count();
+    config.i_frame_interval = 1;
     config.intra_refresh_mode = 1;
+    config.profile_idc = 0x8;
+    config.level_idc = 0x4000;
     return config;
 }
 

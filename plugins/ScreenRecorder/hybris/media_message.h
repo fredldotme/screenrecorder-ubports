@@ -83,8 +83,8 @@ public:
     PROP_INT32(intraRefreshMode, "intra-refresh-mode")
     PROP_INT32(intraRefreshCIRMbs, "intra-refresh-CIR-mbs")
     PROP_INT32(iFrameInterval, "i-frame-interval")
-    PROP_INT32(profileIdc, "profile-idc")
-    PROP_INT32(levelIdc, "level-idc")
+    PROP_INT32(profileIdc, "profile")
+    PROP_INT32(levelIdc, "level")
     PROP_INT32(constraintSet, "constraint-set")
     PROP_BOOL(prependSpsPpstoIdrFrames, "prepend-sps-pps-to-idr-frames")
 

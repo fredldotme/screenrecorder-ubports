@@ -19,6 +19,7 @@
 #define CAPTURES_MIR_H
 
 #include <QObject>
+#include <QElapsedTimer>
 #include "capture.h"
 
 #include <mir_toolkit/mir_client_library.h>
@@ -46,6 +47,7 @@ private:
     MirScreencast *m_screencast = nullptr;
     MirBufferStream *m_bufferStream = nullptr;
     QSharedPointer<QSemaphore> m_semaphore;
+    QElapsedTimer m_elapsed;
 };
 
 #endif // CAPTURES_MIR_H
