@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(lomiri-screen-recorder C CXX)
+
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
+ADD_DEFINITIONS(-DQT_NO_DEBUG)
+
 # Automatically create moc files
 set(CMAKE_AUTOMOC ON)
 

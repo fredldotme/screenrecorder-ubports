@@ -128,10 +128,12 @@ MainView {
             }
 
             Label {
-                text: i18n.tr("The recording indicator will not show up until you restart your device or Lomiri once.")
+                text: i18n.tr("Tap to record the screen")
+                font.pixelSize: units.gu(3.5)
                 wrapMode: Text.WordWrap
                 color: "white"
                 Layout.fillWidth: true
+                horizontalAlignment: Label.AlignHCenter
             }
 
 /*
@@ -247,7 +249,7 @@ MainView {
             id: picker
             anchors.fill: parent
             visible: false
-            showTitle: false
+            showTitle: true
             contentType: ContentType.Videos
             handler: ContentHandler.Destination
 
@@ -258,6 +260,10 @@ MainView {
                 id: contentItem
             }
 
+            onCancelPressed: {
+                picker.visible = false
+                Controller.cleanSpace();
+            }
             onPeerSelected: {
                 peer.selectionType = ContentTransfer.Single
                 picker.activeTransfer = peer.request()
@@ -274,6 +280,7 @@ MainView {
                     if (picker.activeTransfer.state === ContentTransfer.Charged) {
                         console.log("Charged");
                         picker.activeTransfer = null
+                        Controller.cleanSpace();
                     }
                 })
                 picker.visible = false

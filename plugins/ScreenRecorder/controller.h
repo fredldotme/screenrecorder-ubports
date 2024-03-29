@@ -35,6 +35,7 @@ public:
 
     Q_INVOKABLE void start(unsigned int width, unsigned int height, float scale, float framerate);
     Q_INVOKABLE void stop();
+    Q_INVOKABLE void cleanSpace();
 
 Q_SIGNALS:
     void fileSaved(const QString path);

@@ -17,6 +17,8 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QDir>
+#include <QDirIterator>
+#include <QFile>
 #include <QStandardPaths>
 #include <chrono>
 
@@ -64,4 +66,19 @@ void Controller::stop()
     m_recorder.stop();
     m_mux->stop();
     Q_EMIT fileSaved(m_fileName);
+}
+
+void Controller::cleanSpace()
+{
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+
+    if (!dir.exists())
+        return;
+
+    QDirIterator it(dir);
+
+    while (it.hasNext()) {
+        const auto path = it.next();
+        qInfo() << "Deleting stale file" << path << QFile(path).remove();
+    }
 }
