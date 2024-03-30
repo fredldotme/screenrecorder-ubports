@@ -36,6 +36,11 @@ MainView {
     width: units.gu(45)
     height: units.gu(75)
 
+    Screen.orientationUpdateMask: Qt.LandscapeOrientation |
+                                  Qt.PortraitOrientation |
+                                  Qt.InvertedLandscapeOrientation |
+                                  Qt.InvertedPortraitOrientation
+
     QtObject {
         id: d
 
@@ -71,7 +76,16 @@ MainView {
         function startRecording() {
             recordingButton.recording = true;
             d.setAppLifecycleExemption();
-            Controller.start(Screen.width, Screen.height, 1.0/*resolution.checkedButton.value*/, 30/*fps.checkedButton.value*/);
+            let width = Screen.width
+            let height = Screen.height
+            /*if (Screen.primaryOrientation == Qt.PortraitOrientation &&
+                (Screen.orientation == Qt.LandscapeOrientation ||
+                 Screen.orientation == Qt.InvertedLandscapeOrientation)) {
+                const swp = width
+                width = height
+                height = swp
+            }*/
+            Controller.start(width, height, 1.0/*resolution.checkedButton.value*/, 30/*fps.checkedButton.value*/);
         }
 
         function stopRecording() {
@@ -128,7 +142,9 @@ MainView {
             }
 
             Label {
-                text: i18n.tr("Tap to record the screen")
+                text: !recordingButton.recording ?
+                          i18n.tr("Tap to record the screen") :
+                          i18n.tr("Tap to stop recording")
                 font.pixelSize: units.gu(3.5)
                 wrapMode: Text.WordWrap
                 color: "white"

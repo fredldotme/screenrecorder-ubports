@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: screenrecorder.ubports\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-29 17:22+0000\n"
+"POT-Creation-Date: 2024-03-30 16:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,14 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../qml/Main.qml:99 screenrecorder.desktop.in.h:1
+#: ../qml/Main.qml:113 screenrecorder.desktop.in.h:1
 msgid "Screen recorder"
 msgstr ""
 
-#: ../qml/Main.qml:131
+#: ../qml/Main.qml:146
 msgid "Tap to record the screen"
+msgstr ""
+
+#: ../qml/Main.qml:147
+msgid "Tap to stop recording"
 msgstr ""
