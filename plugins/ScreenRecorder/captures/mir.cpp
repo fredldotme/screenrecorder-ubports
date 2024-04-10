@@ -33,18 +33,8 @@ CaptureMir::~CaptureMir()
     }
 }
 
-void CaptureMir::setSemaphore(const QSharedPointer<QSemaphore> semaphore)
-{
-    m_semaphore = semaphore;
-}
-
 void CaptureMir::start()
 {
-    if (!m_semaphore) {
-        qCritical() << "tried to start a capture without a semaphore";
-        return;
-    }
-
     if (m_screencast || m_bufferStream) {
         qWarning() << "tried to start a capture while already started";
         return;
@@ -156,12 +146,9 @@ void CaptureMir::stop()
 void CaptureMir::swapBuffers()
 {
     qDebug() << "swapping buffers";
-    m_semaphore->acquire();
     if (!m_bufferStream) {
-        m_semaphore->release();
         return;
     }
-    qDebug() << "aqcuired semaphore";
     mir_buffer_stream_swap_buffers_sync(m_bufferStream);
     MirNativeBuffer *buffer = nullptr;
     mir_buffer_stream_get_current_buffer(m_bufferStream, &buffer);

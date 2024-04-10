@@ -26,7 +26,6 @@
 
 ScreenRecorder::ScreenRecorder(QObject *parent) : QObject(parent)
 {
-    m_semaphore = QSharedPointer<QSemaphore>(new QSemaphore(2));
 }
 
 void ScreenRecorder::setup(QSharedPointer<QObject> encoder, QSharedPointer<QObject> capture,
@@ -54,7 +53,6 @@ void ScreenRecorder::setup(QSharedPointer<QObject> encoder, QSharedPointer<QObje
     m_mux = mux;
     m_indicator = QSharedPointer<Indicator>(new Indicator());
 
-    qobject_cast<Capture *>(m_capture.data())->setSemaphore(m_semaphore);
     m_encoder->moveToThread(&m_encoderThread);
     m_capture->moveToThread(&m_captureThread);
     m_mux->moveToThread(&m_muxThread);
@@ -79,7 +77,6 @@ void ScreenRecorder::setup(QSharedPointer<QObject> encoder, QSharedPointer<QObje
 void ScreenRecorder::bufferAvailable()
 {
     qDebug() << "buffer returned";
-    m_semaphore->release();
 }
 
 void ScreenRecorder::start(float framerate)

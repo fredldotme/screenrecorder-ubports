@@ -25,7 +25,6 @@
 #include <QObject>
 #include <QThread>
 #include <QSharedPointer>
-#include <QSemaphore>
 #include <QTimer>
 #include <QElapsedTimer>
 
@@ -51,7 +50,6 @@ private:
     QSharedPointer<QObject> m_capture;
     QSharedPointer<QObject> m_mux;
     QTimer m_timer;
-    QSharedPointer<QSemaphore> m_semaphore;
     QSharedPointer<Indicator> m_indicator;
     QElapsedTimer m_elapsed;
     uint64_t m_frames;

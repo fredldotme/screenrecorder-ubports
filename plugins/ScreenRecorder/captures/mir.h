@@ -33,7 +33,6 @@ class CaptureMir : public QObject, public Capture
 public:
     using QObject::QObject;
     ~CaptureMir();
-    void setSemaphore(const QSharedPointer<QSemaphore> semaphore) override;
 Q_SIGNALS:
     void started(int width, int height, double framerate) override;
     void bufferAvailable(const Buffer::Ptr &buffer) override;
@@ -46,7 +45,6 @@ private:
     MirConnection *m_connection = nullptr;
     MirScreencast *m_screencast = nullptr;
     MirBufferStream *m_bufferStream = nullptr;
-    QSharedPointer<QSemaphore> m_semaphore;
     QElapsedTimer m_elapsed;
 };
 

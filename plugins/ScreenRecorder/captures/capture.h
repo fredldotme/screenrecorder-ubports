@@ -20,13 +20,11 @@
 
 #include <QtPlugin>
 #include <QSharedPointer>
-#include <QSemaphore>
 #include "../buffer.h"
 
 class Capture
 {
 public:
-    virtual void setSemaphore(const QSharedPointer<QSemaphore> semaphore) = 0;
 Q_SIGNALS:
     virtual void started(int width, int height, double framerate) = 0;
     virtual void bufferAvailable(const Buffer::Ptr &buffer) = 0;
