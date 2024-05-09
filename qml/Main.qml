@@ -44,6 +44,8 @@ MainView {
     QtObject {
         id: d
 
+        property bool pendingDelayedRecording: false
+
         function checkAppLifecycleExemption() {
             const appidList = gsettings.lifecycleExemptAppids;
             if (!appidList) {
@@ -88,6 +90,10 @@ MainView {
             Controller.start(width, height, 1.0/*resolution.checkedButton.value*/, 30/*fps.checkedButton.value*/);
         }
 
+        function startDelayedRecording() {
+            pendingDelayedRecording = true;
+        }
+
         function stopRecording() {
             recordingButton.recording = false;
             Controller.stop();
@@ -102,6 +108,16 @@ MainView {
     GSettings {
         id: gsettings
         schema.id: "com.canonical.qtmir"
+    }
+
+    Connections {
+        target: Qt.application
+        onStateChanged: {
+            if (target.state == Qt.ApplicationInactive)
+                if (d.pendingDelayedRecording && !recordingButton.recording)
+                    d.startRecording();
+                    d.pendingDelayedRecording = false;
+        }
     }
 
     Page {
@@ -142,10 +158,22 @@ MainView {
             }
 
             Label {
-                text: !recordingButton.recording ?
-                          i18n.tr("Tap to record the screen") :
-                          i18n.tr("Tap to stop recording")
+                text: d.pendingDelayedRecording ?
+                            i18n.tr("Tap to cancel delayed recording")
+                            : !recordingButton.recording ?
+                                i18n.tr("Tap to record the screen") :
+                                i18n.tr("Tap to stop recording")
                 font.pixelSize: units.gu(3.5)
+                wrapMode: Text.WordWrap
+                color: "white"
+                Layout.fillWidth: true
+                horizontalAlignment: Label.AlignHCenter
+            }
+
+            Label {
+                text: i18n.tr("Long press for delayed recording")
+                visible: !d.pendingDelayedRecording && !recordingButton.recording
+                font.pixelSize: units.gu(2)
                 wrapMode: Text.WordWrap
                 color: "white"
                 Layout.fillWidth: true
@@ -238,22 +266,41 @@ MainView {
 
                     BusyIndicator {
                         id: indicator
-                        running: recordingButton.recording
+                        running: recordingButton.recording || d.pendingDelayedRecording
                         visible: running
                         anchors.centerIn: parent
                     }
 
                     MouseArea {
                         id: recordingButtonMouseArea
+
                         anchors.fill: parent
                         onClicked: {
-                            if (!recordingButton.recording)
-                                d.startRecording()
+                            if (d.pendingDelayedRecording)
+                                d.pendingDelayedRecording = false
                             else
-                                d.stopRecording()
+                                if (!recordingButton.recording)
+                                    d.startRecording()
+                                else
+                                    d.stopRecording()
+                        }
+
+                        onPressAndHold: {
+                            if (!recordingButton.recording)
+                                d.startDelayedRecording()
                         }
                     }
                 }
+            }
+
+            Label {
+                text: i18n.tr("Recording will start once the app is in the background")
+                visible: d.pendingDelayedRecording
+                font.pixelSize: units.gu(2.5)
+                wrapMode: Text.WordWrap
+                color: "white"
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
             }
 
             Item {
