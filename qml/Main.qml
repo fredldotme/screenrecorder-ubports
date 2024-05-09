@@ -92,6 +92,12 @@ MainView {
 
         function startDelayedRecording() {
             pendingDelayedRecording = true;
+            d.setAppLifecycleExemption();
+        }
+
+        function cancelDelayedRecording() {
+            pendingDelayedRecording = false;
+            d.unsetAppLifecycleExemption();
         }
 
         function stopRecording() {
@@ -277,7 +283,7 @@ MainView {
                         anchors.fill: parent
                         onClicked: {
                             if (d.pendingDelayedRecording)
-                                d.pendingDelayedRecording = false
+                                d.cancelDelayedRecording()
                             else
                                 if (!recordingButton.recording)
                                     d.startRecording()
