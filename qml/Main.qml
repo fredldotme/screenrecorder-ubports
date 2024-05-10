@@ -165,7 +165,7 @@ MainView {
 
             Label {
                 text: d.pendingDelayedRecording ?
-                            i18n.tr("Tap to cancel delayed recording")
+                            i18n.tr("Tap to cancel recording")
                             : !recordingButton.recording ?
                                 i18n.tr("Tap to record the screen") :
                                 i18n.tr("Tap to stop recording")
@@ -177,13 +177,13 @@ MainView {
             }
 
             Label {
-                text: i18n.tr("Long press for delayed recording")
-                visible: !d.pendingDelayedRecording && !recordingButton.recording
-                font.pixelSize: units.gu(2)
+                text: i18n.tr("Recording will start once the app is in the background")
+                visible: d.pendingDelayedRecording
+                font.pixelSize: units.gu(2.5)
                 wrapMode: Text.WordWrap
                 color: "white"
                 Layout.fillWidth: true
-                horizontalAlignment: Label.AlignHCenter
+                horizontalAlignment: Text.AlignHCenter
             }
 
 /*
@@ -286,27 +286,12 @@ MainView {
                                 d.cancelDelayedRecording()
                             else
                                 if (!recordingButton.recording)
-                                    d.startRecording()
+                                    d.startDelayedRecording()
                                 else
                                     d.stopRecording()
                         }
-
-                        onPressAndHold: {
-                            if (!recordingButton.recording)
-                                d.startDelayedRecording()
-                        }
                     }
                 }
-            }
-
-            Label {
-                text: i18n.tr("Recording will start once the app is in the background")
-                visible: d.pendingDelayedRecording
-                font.pixelSize: units.gu(2.5)
-                wrapMode: Text.WordWrap
-                color: "white"
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignHCenter
             }
 
             Item {
