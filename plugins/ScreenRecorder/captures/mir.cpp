@@ -58,14 +58,24 @@ void CaptureMir::start()
     }
 
     MirDisplayOutput *activeOutput = nullptr;
-    uint8_t outputIndex = 0;
+
+    unsigned int usableOutputs = 0;
+    for (uint8_t i = 0; i < config->num_outputs; ++i) {
+        if (config->outputs[i].connected && config->outputs[i].used
+            && config->outputs[i].current_mode < config->outputs[i].num_modes) {
+            ++usableOutputs;
+        }
+    }
 
     for (uint8_t i = 0; i < config->num_outputs; ++i) {
         if (config->outputs[i].connected && config->outputs[i].used
             && config->outputs[i].current_mode < config->outputs[i].num_modes) {
+            // Jump to the next possible external or virtual output if two monitors are detected.
+            if (usableOutputs > 1 && i == 0)
+                continue;
+
             // Found an active connection we can just use for our purpose
             activeOutput = &config->outputs[i];
-            outputIndex = i;
             break;
         }
     }
