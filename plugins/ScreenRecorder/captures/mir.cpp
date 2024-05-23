@@ -101,8 +101,8 @@ void CaptureMir::start()
     // If we request a screen region outside the available screen area
     // mir will create a mir output which is then available for everyone
     // as just another display.
-    region.left = 0;
-    region.top = 0;
+    region.left = activeOutput->position_x;
+    region.top = activeOutput->position_y;
     region.width = displayMode->horizontal_resolution;
     region.height = displayMode->vertical_resolution;
 
