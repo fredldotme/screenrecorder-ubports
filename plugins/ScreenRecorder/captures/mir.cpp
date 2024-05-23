@@ -24,6 +24,10 @@ static constexpr const char *kMirSocket{ "/run/mir_socket" };
 static constexpr const char *kMirConnectionName{ "screencapture client" };
 } // namespace
 
+CaptureMir::CaptureMir()
+{
+}
+
 CaptureMir::~CaptureMir()
 {
     stop();
@@ -33,7 +37,7 @@ CaptureMir::~CaptureMir()
     }
 }
 
-void CaptureMir::start()
+void CaptureMir::init()
 {
     if (m_screencast || m_bufferStream) {
         qWarning() << "tried to start a capture while already started";
@@ -71,7 +75,7 @@ void CaptureMir::start()
         if (config->outputs[i].connected && config->outputs[i].used
             && config->outputs[i].current_mode < config->outputs[i].num_modes) {
             // Jump to the next possible external or virtual output if two monitors are detected.
-            if (usableOutputs > 1 && i == 0)
+            if (usableOutputs > 1 && config->outputs[i].type == mir_display_output_type_lvds)
                 continue;
 
             // Found an active connection we can just use for our purpose
@@ -85,8 +89,14 @@ void CaptureMir::start()
         return;
     }
 
-    const MirDisplayMode *displayMode = &activeOutput->modes[activeOutput->current_mode];
+    MirDisplayMode *displayMode = &activeOutput->modes[activeOutput->current_mode];
 
+    m_displayMode = displayMode;
+    m_activeOutput = activeOutput;
+}
+
+void CaptureMir::start()
+{
     auto spec = mir_create_screencast_spec(m_connection);
     if (!spec) {
         qCritical() << "failed to create Mir screencast specification:"
@@ -94,17 +104,17 @@ void CaptureMir::start()
         return;
     }
 
-    mir_screencast_spec_set_width(spec, displayMode->horizontal_resolution);
-    mir_screencast_spec_set_height(spec, displayMode->vertical_resolution);
+    mir_screencast_spec_set_width(spec, m_displayMode->horizontal_resolution);
+    mir_screencast_spec_set_height(spec, m_displayMode->vertical_resolution);
 
     MirRectangle region;
     // If we request a screen region outside the available screen area
     // mir will create a mir output which is then available for everyone
     // as just another display.
-    region.left = activeOutput->position_x;
-    region.top = activeOutput->position_y;
-    region.width = displayMode->horizontal_resolution;
-    region.height = displayMode->vertical_resolution;
+    region.left = m_activeOutput->position_x;
+    region.top = m_activeOutput->position_y;
+    region.width = m_displayMode->horizontal_resolution;
+    region.height = m_displayMode->vertical_resolution;
 
     mir_screencast_spec_set_capture_region(spec, &region);
 
@@ -138,8 +148,9 @@ void CaptureMir::start()
     m_elapsed.restart();
 
     qDebug() << "started mir capture";
-    Q_EMIT started(displayMode->horizontal_resolution, displayMode->vertical_resolution,
-                   displayMode->refresh_rate);
+    Q_EMIT started(m_displayMode->horizontal_resolution,
+                   m_displayMode->vertical_resolution,
+                   m_displayMode->refresh_rate);
 }
 
 void CaptureMir::stop()
@@ -150,6 +161,8 @@ void CaptureMir::stop()
 
     m_screencast = nullptr;
     m_bufferStream = nullptr;
+    m_activeOutput = nullptr;
+    m_displayMode = nullptr;
     m_elapsed.invalidate();
 }
 
@@ -166,4 +179,14 @@ void CaptureMir::swapBuffers()
     const auto wrappedBuffer = Buffer::Create(reinterpret_cast<void *>(buffer));
     wrappedBuffer->SetTimestamp(m_elapsed.elapsed() * 1000);
     Q_EMIT bufferAvailable(wrappedBuffer);
+}
+
+int CaptureMir::width()
+{
+    return m_displayMode->horizontal_resolution;
+}
+
+int CaptureMir::height()
+{
+    return m_displayMode->vertical_resolution;
 }
