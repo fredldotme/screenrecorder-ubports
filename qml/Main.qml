@@ -147,13 +147,17 @@ MainView {
         ColumnLayout {
             spacing: units.gu(2)
 
-            anchors {
-                margins: units.gu(2)
-                fill: parent
+            anchors.centerIn: parent
+
+            width: parent.width - (units.gu(2) * 2)
+            height: implicitHeight
+
+            Behavior on height {
+                LomiriNumberAnimation {}
             }
 
-            Item {
-                Layout.fillHeight: true
+            Behavior on y {
+                LomiriNumberAnimation {}
             }
 
             Label {
@@ -285,10 +289,6 @@ MainView {
                         }
                     }
                 }
-            }
-
-            Item {
-                Layout.fillHeight: true
             }
         }
 
