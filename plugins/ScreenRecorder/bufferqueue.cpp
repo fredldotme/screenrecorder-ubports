@@ -45,9 +45,10 @@ Buffer::Ptr BufferQueue::front()
 
 Buffer::Ptr BufferQueue::next()
 {
-    // We will block here forever until we get a new buffer but if
-    // the wait call returns with false we're mostly likly terminating
-    if (!waitToBeFilled(std::chrono::milliseconds{ -1 }))
+    // Wait 1.5 seconds at max until filled as concurrent use of Aethercast
+    // and the screen recorder can cause a deadlock situation as observed
+    // on the Pixel 3a.
+    if (!waitToBeFilled(std::chrono::milliseconds{ 1500 }))
         return nullptr;
 
     std::unique_lock<std::mutex> l(m_mutex);

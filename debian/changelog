@@ -1,3 +1,9 @@
+lomiri-screen-recorder (1.1.0) unstable; urgency=medium
+
+  * Record the first secondary display if more than one has been detected
+
+ -- Alfred Neumayer <dev.beidl@gmail.com>  Fri, 24 May 2024 21:09:26 +0200
+
 lomiri-screen-recorder (1.0.0) unstable; urgency=medium
 
   * Initial release

@@ -38,11 +38,12 @@ Controller::Controller()
 
 Controller::~Controller() { }
 
-void Controller::start(unsigned int width, unsigned int height, float scale, float framerate)
+void Controller::start(float scale, float framerate)
 {
     auto config = AndroidH264Encoder::defaultConfig();
-    config.width = width;
-    config.height = height;
+    m_capture->init();
+    config.width = m_capture->width();
+    config.height = m_capture->height();
     config.output_scale = scale;
     m_encoder->configure(config);
 
@@ -57,7 +58,7 @@ void Controller::start(unsigned int width, unsigned int height, float scale, flo
                          .append(QDateTime::currentDateTime().toString("yyyy_MM_dd__hh_mm_ss_zzz"))
                          .append(".mp4");
 
-    m_mux->start(m_fileName, width, height);
+    m_mux->start(m_fileName, m_capture->width(), m_capture->height());
     m_recorder.start(framerate);
 }
 

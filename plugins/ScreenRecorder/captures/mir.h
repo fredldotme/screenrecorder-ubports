@@ -32,7 +32,11 @@ class CaptureMir : public QObject, public Capture
     Q_INTERFACES(Capture)
 public:
     using QObject::QObject;
+    CaptureMir();
     ~CaptureMir();
+    void init() override;
+    int width() override;
+    int height() override;
 Q_SIGNALS:
     void started(int width, int height, double framerate) override;
     void bufferAvailable(const Buffer::Ptr &buffer) override;
@@ -45,6 +49,8 @@ private:
     MirConnection *m_connection = nullptr;
     MirScreencast *m_screencast = nullptr;
     MirBufferStream *m_bufferStream = nullptr;
+    MirDisplayMode *m_displayMode = nullptr;
+    MirDisplayOutput *m_activeOutput = nullptr;
     QElapsedTimer m_elapsed;
 };
 

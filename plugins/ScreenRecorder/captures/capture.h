@@ -25,6 +25,9 @@
 class Capture
 {
 public:
+    virtual void init() = 0;
+    virtual int width() = 0;
+    virtual int height() = 0;
 Q_SIGNALS:
     virtual void started(int width, int height, double framerate) = 0;
     virtual void bufferAvailable(const Buffer::Ptr &buffer) = 0;

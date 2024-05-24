@@ -78,16 +78,7 @@ MainView {
         function startRecording() {
             recordingButton.recording = true;
             d.setAppLifecycleExemption();
-            let width = Screen.width
-            let height = Screen.height
-            /*if (Screen.primaryOrientation == Qt.PortraitOrientation &&
-                (Screen.orientation == Qt.LandscapeOrientation ||
-                 Screen.orientation == Qt.InvertedLandscapeOrientation)) {
-                const swp = width
-                width = height
-                height = swp
-            }*/
-            Controller.start(width, height, 1.0/*resolution.checkedButton.value*/, 30/*fps.checkedButton.value*/);
+            Controller.start(1.0/*resolution.checkedButton.value*/, 30/*fps.checkedButton.value*/);
         }
 
         function startDelayedRecording() {
