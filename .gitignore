@@ -1,2 +1,7 @@
 build
 .clickable
+debian/files
+debian/.debhelper/
+debian/lomiri-screen-recorder/
+debian/*.debhelper.log
+debian/*.substvars
