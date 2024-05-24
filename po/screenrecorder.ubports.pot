@@ -17,14 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../qml/Main.qml:104 screenrecorder.desktop.in.h:1
+#: ../qml/Main.qml:135 screenrecorder.desktop.in.h:1
 msgid "Screen recorder"
 msgstr ""
 
-#: ../qml/Main.qml:137
+#: ../qml/Main.qml:168
+msgid "Tap to cancel recording"
+msgstr ""
+
+#: ../qml/Main.qml:170
 msgid "Tap to record the screen"
 msgstr ""
 
-#: ../qml/Main.qml:138
+#: ../qml/Main.qml:171
 msgid "Tap to stop recording"
+msgstr ""
+
+#: ../qml/Main.qml:180
+msgid "Recording will start once the app is in the background"
 msgstr ""
