@@ -111,9 +111,10 @@ MainView {
         target: Qt.application
         onStateChanged: {
             if (target.state == Qt.ApplicationInactive)
-                if (d.pendingDelayedRecording && !recordingButton.recording)
+                if (d.pendingDelayedRecording && !recordingButton.recording) {
                     d.startRecording();
                     d.pendingDelayedRecording = false;
+            }
         }
     }
 
