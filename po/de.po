@@ -1,0 +1,38 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the screenrecorder.ubports package.
+#
+# Alfred Neumayer <dev.beidl@gmail.com>, 2024.
+msgid ""
+msgstr ""
+"Project-Id-Version: screenrecorder.ubports\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-30 16:47+0000\n"
+"PO-Revision-Date: 2024-05-02 17:29+0200\n"
+"Last-Translator: Alfred Neumayer <dev.beidl@gmail.com>\n"
+"Language-Team: German <>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 21.08.0\n"
+
+#: ../qml/Main.qml:113 screenrecorder.desktop.in.h:1
+msgid "Screen recorder"
+msgstr "Bildschirmaufnahme"
+
+#: ../qml/Main.qml:161
+msgid "Tap to cancel recording"
+msgstr "Drücken um Bildschirmaufnahme abzubrechen"
+
+#: ../qml/Main.qml:146
+msgid "Tap to record the screen"
+msgstr "Drücken um Bildschirmaufnahme zu starten"
+
+#: ../qml/Main.qml:147
+msgid "Tap to stop recording"
+msgstr "Drücken um Bildschirmaufnahme zu stoppen"
+
+#: ../qml/Main.qml:173
+msgid "Recording will start once the app is in the background"
+msgstr "Die Aufnahme startet sobald die App im Hintergrund ist"
