@@ -175,12 +175,22 @@ MainView {
 
             Label {
                 text: i18n.tr("Recording will start once the app is in the background")
-                visible: d.pendingDelayedRecording
+                readonly property bool visibility: d.pendingDelayedRecording
+                opacity: visibility ? 1.0 : 0.0
+                visible: opacity > 0.0
+                height: visibility ? implicitHeight : 0
                 font.pixelSize: units.gu(2.5)
                 wrapMode: Text.WordWrap
                 color: "white"
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
+
+                Behavior on opacity {
+                    LomiriNumberAnimation {}
+                }
+                Behavior on height {
+                    LomiriNumberAnimation {}
+                }
             }
 
 /*
