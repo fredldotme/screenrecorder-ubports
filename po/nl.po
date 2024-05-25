@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: screenrecorder.ubports\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-30 16:47+0000\n"
-"PO-Revision-Date: 2024-05-02 17:29+0200\n"
+"POT-Creation-Date: 2024-05-24 21:25+0000\n"
+"PO-Revision-Date: 2024-05-25 11:59+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <>\n"
 "Language: nl\n"
@@ -15,16 +15,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 21.08.0\n"
+"X-Generator: Poedit 3.4.2\n"
 
-#: ../qml/Main.qml:113 screenrecorder.desktop.in.h:1
+#: ../qml/Main.qml:128 screenrecorder.desktop.in.h:1
 msgid "Screen recorder"
 msgstr "Schermopname"
 
-#: ../qml/Main.qml:146
+#: ../qml/Main.qml:165
+msgid "Tap to cancel recording"
+msgstr "Druk om de schermopname af te breken"
+
+#: ../qml/Main.qml:167
 msgid "Tap to record the screen"
 msgstr "Druk om de schermopname te starten"
 
-#: ../qml/Main.qml:147
+#: ../qml/Main.qml:168
 msgid "Tap to stop recording"
 msgstr "Druk om de schermopname te stoppen"
+
+#: ../qml/Main.qml:177
+msgid "Recording will start once the app is in the background"
+msgstr "De opname begint zodra de app op de achtergrond is"
