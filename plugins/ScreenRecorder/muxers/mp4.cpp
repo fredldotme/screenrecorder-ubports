@@ -35,7 +35,7 @@ inline static MP4E_track_t setupAudioTrack()
     ret.object_type_indication = MP4_OBJECT_TYPE_AUDIO_ISO_IEC_14496_3;
     ret.track_media_kind = e_audio;
     ret.time_scale = format.sampleRate();
-    ret.default_duration = 100;
+    ret.default_duration = 0;
     ret.u.a.channelcount = format.channelCount();
 
     return ret;
@@ -119,7 +119,7 @@ void MuxMp4::addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig)
 
 void MuxMp4::addAudioBuffer(const Buffer::Ptr &buffer)
 {
-    MP4E_put_sample(m_mux, m_trackId, buffer->Data(), buffer->Length(), 100, MP4E_SAMPLE_DEFAULT);
+    MP4E_put_sample(m_mux, m_trackId, buffer->Data(), buffer->Length(), buffer->Timestamp(), MP4E_SAMPLE_DEFAULT);
 }
 
 void MuxMp4::stop()

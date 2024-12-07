@@ -34,17 +34,18 @@ AacConverter(const int sampleRate, const int channels) {
     }
 };
 
-char* encodeWav(char* data, unsigned int length, unsigned int& bufSize)
+unsigned char* encodeWav(const char* data, unsigned int length, unsigned int& bufSize)
 {
     frameEncode = av_frame_alloc();
 
     int rawOffset = 0;
     int rawDelta = 0;
     int rawSamplesCount = frameEncode->nb_samples <= length ? frameEncode->nb_samples : length;
+    char* dataPtr = (char*)data;
 
     while (rawSamplesCount > 0)
     {
-        memcpy(frameEncode->data[0], &data[rawOffset], sizeof(uint8_t) * rawSamplesCount);
+        memcpy(frameEncode->data[0], &dataPtr[rawOffset], sizeof(uint8_t) * rawSamplesCount);
 
         encodeFrame();
 
@@ -55,8 +56,8 @@ char* encodeWav(char* data, unsigned int length, unsigned int& bufSize)
 
     av_frame_unref(frameEncode);
 
-    bufSize = 0;
-    return nullptr;
+    bufSize = collectedSamples.size();
+    return collectedSamples.data();
 }
 
 void encodeFrame()
@@ -74,58 +75,24 @@ void encodeFrame()
         ret = avcodec_receive_packet(audioCodec, &packetEncode);
         if (ret < 0 && ret != AVERROR(EAGAIN)) continue;
         if (ret < 0) break;
-        std::pair<uint8_t*, unsigned int> p = std::pair<uint8_t*, unsigned int>();
-        p.first = (uint8_t *)(malloc(sizeof(uint8_t) * packetEncode.size));
-        memcpy(p.first, packetEncode.data, (size_t)packetEncode.size);
-        p.second = (unsigned int)(packetEncode.size);
+        uint8_t* data = (uint8_t *)(malloc(sizeof(uint8_t) * packetEncode.size));
+        memcpy(data, packetEncode.data, (size_t)packetEncode.size);
+        const auto size = (unsigned int)(packetEncode.size);
 
-        listEncode.push_back(p); // place encoded data into list to finally create one array of encoded data from it
+        for (unsigned int i = 0; i < size; i++) {
+            collectedSamples.push_back(data[i]);
+        }
+        free(data);
     }
     av_packet_unref(&packetEncode);
 }
-
-#if 0
-char* encodeWav(char* wav, int size, unsigned int& bufSize)
-{
-    int ret;
-    char* buf;
-
-    bufSize = 48000 * 8 * 1;
-    buf = (char*)malloc(bufSize);
-    if (buf == NULL) return nullptr;
-
-    /* the codec gives us the frame size, in samples */
-    frame_size = audioCodec->frame_size;
-    samples = malloc(frame_size * 2 * audioCodec->channels);
-    outbuf_size = 10000;
-    outbuf = malloc(outbuf_size);
-
-    /* encode a single tone sound */
-    t = 0;
-    tincr = 2 * M_PI * 440.0 / audioCodec->sample_rate;
-    for(i=0;i<200;i++) {
-        for(j=0;j<frame_size;j++) {
-            samples[2*j] = (int)(sin(t) * 10000);
-            samples[2*j+1] = samples[2*j];
-            t += tincr;
-        }
-        /* encode the samples */
-        out_size = avcodec_encode_audio2(audioCodec, outbuf, outbuf_size, samples);
-        buf + 
-    }
-    free(outbuf);
-    free(samples);
-
-    return buf;
-}
-#endif
 
 private:
     AVCodecContext *audioCodec;
     AVCodec *codec;
     AVPacket packetEncode;
     AVFrame* frameEncode;
-    std::vector<std::pair<uint8_t*, unsigned int>> listEncode;
+    std::vector<uint8_t> collectedSamples;
 };
 
 }
