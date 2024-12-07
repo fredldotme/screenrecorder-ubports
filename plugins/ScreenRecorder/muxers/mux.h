@@ -20,6 +20,8 @@
 
 #include <QtPlugin>
 
+#include <QAudioFormat>
+
 #include "../buffer.h"
 
 class Mux
@@ -29,6 +31,8 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     virtual void addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig) = 0;
+    virtual void addAudioBuffer(const Buffer::Ptr &buffer) = 0;
+    virtual QAudioFormat audioFormat() = 0;
     virtual void start(const QString fileName, const int width, const int height) = 0;
     virtual void stop() = 0;
 };

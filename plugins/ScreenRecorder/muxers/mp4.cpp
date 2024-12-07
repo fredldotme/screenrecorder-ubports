@@ -16,11 +16,35 @@
  */
 
 #include "mp4.h"
-#include <QDebug>
+#include <array>
+#include <string>
 #include <stdexcept>
+
+#include <QDebug>
+#include <QAudioDeviceInfo>
 
 #define MINIMP4_IMPLEMENTATION
 #include "../minimp4.h"
+
+QAudioFormat audioFormatCheck();
+inline static MP4E_track_t setupAudioTrack()
+{
+    MP4E_track_t ret;
+    QAudioFormat format = audioFormatCheck();
+
+    ret.object_type_indication = MP4_OBJECT_TYPE_AUDIO_ISO_IEC_14496_3;
+    ret.track_media_kind = e_audio;
+    ret.time_scale = format.sampleRate();
+    ret.default_duration = 100;
+    ret.u.a.channelcount = format.channelCount();
+
+    return ret;
+}
+
+MuxMp4::MuxMp4(QObject* parent) : QObject(parent), m_audioTrack{setupAudioTrack()}
+{
+
+}
 
 MuxMp4::~MuxMp4()
 {
@@ -40,6 +64,8 @@ void MuxMp4::start(const QString fileName, const int width, const int height)
     m_file.setFileName(fileName);
     m_file.open(QIODevice::WriteOnly);
     m_mux = MP4E_open(0, 0, (void *)&m_file, write_callback);
+
+    m_trackId = MP4E_add_track(m_mux, &m_audioTrack);
 
     qDebug() << "before mp4_h26x_write_init";
 
@@ -91,6 +117,11 @@ void MuxMp4::addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig)
     }
 }
 
+void MuxMp4::addAudioBuffer(const Buffer::Ptr &buffer)
+{
+    MP4E_put_sample(m_mux, m_trackId, buffer->Data(), buffer->Length(), 100, MP4E_SAMPLE_DEFAULT);
+}
+
 void MuxMp4::stop()
 {
     if (!m_running) {
@@ -104,4 +135,28 @@ void MuxMp4::stop()
     m_running = false;
 
     qDebug() << "stopped MuxMp4";
+}
+
+QAudioFormat audioFormatCheck()
+{
+    QAudioFormat format;
+    format.setSampleRate(48000);
+    format.setChannelCount(1);
+    format.setSampleSize(8);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::UnSignedInt);
+
+    QAudioDeviceInfo info = QAudioDeviceInfo::defaultInputDevice();
+    if (!info.isFormatSupported(format)) {
+        qWarning() << "Default format not supported, trying to use the nearest.";
+        format = info.nearestFormat(format);
+    }
+
+    return format;
+}
+
+QAudioFormat MuxMp4::audioFormat()
+{
+    return audioFormatCheck();
 }

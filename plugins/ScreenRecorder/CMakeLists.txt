@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set(PLUGIN "LomiriScreenRecordController")
 
 ADD_DEFINITIONS(-DQT_NO_DEBUG)
@@ -41,8 +41,11 @@ target_link_libraries(${PLUGIN}
   ${GLIB_LIBRARIES}
   ${LOMIRIURLDISPATCHER_LDFLAGS}
   ${LOMIRIURLDISPATCHER_LIBRARIES}
+  ${AVCODEC_LDFLAGS}
+  ${AVCODEC_LIBRARIES}
+  avcodec
 )
-qt5_use_modules(${PLUGIN} Qml Quick DBus)
+qt5_use_modules(${PLUGIN} Qml Quick DBus Multimedia)
 
 execute_process(
     COMMAND dpkg-architecture -qDEB_HOST_MULTIARCH

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(lomiri-screen-recorder C CXX)
 
+SET(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_CXX_FLAGS "-fpermissive")
+
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 ADD_DEFINITIONS(-DQT_NO_DEBUG)
 
@@ -11,6 +15,7 @@ option(CLICK_MODE "Installs to a contained location" ON)
 
 find_package(PkgConfig)
 find_package(Qt5Core REQUIRED)
+find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5QuickControls2 REQUIRED)
@@ -23,6 +28,13 @@ pkg_check_modules(LOMIRIURLDISPATCHER REQUIRED lomiri-url-dispatcher)
 pkg_check_modules(GLIB REQUIRED
     gio-unix-2.0>=2.36
     glib-2.0>=2.36
+)
+
+pkg_check_modules(AVCODEC REQUIRED IMPORTED_TARGET
+    libavformat
+    libavcodec
+    libswresample
+    libavutil
 )
 
 execute_process(

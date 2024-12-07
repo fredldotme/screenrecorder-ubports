@@ -23,6 +23,7 @@
 #include "./captures/mir.h"
 #include "./encoders/encoder.h"
 #include "./muxers/mux.h"
+#include "./muxers/mp4.h"
 
 ScreenRecorder::ScreenRecorder(QObject *parent) : QObject(parent)
 {
@@ -48,9 +49,12 @@ void ScreenRecorder::setup(QSharedPointer<QObject> encoder, QSharedPointer<QObje
         return;
     }
 
+    // Encoder and capture mechanism
     m_encoder = encoder;
     m_capture = capture;
     m_mux = mux;
+
+    // Indicator
     m_indicator = QSharedPointer<Indicator>(new Indicator());
 
     m_encoder->moveToThread(&m_encoderThread);
@@ -58,10 +62,11 @@ void ScreenRecorder::setup(QSharedPointer<QObject> encoder, QSharedPointer<QObje
     m_mux->moveToThread(&m_muxThread);
     m_indicator->moveToThread(&m_indicatorThread);
 
-    m_timer.setInterval(1000 / 30);
+    m_timer.setInterval(1000 / 60);
+
+    // Video encode
     connect(m_capture.data(), SIGNAL(bufferAvailable(const Buffer::Ptr)), m_encoder.data(),
             SLOT(addBuffer(const Buffer::Ptr)));
-
     connect(m_encoder.data(), SIGNAL(bufferAvailable(const Buffer::Ptr, const bool)), m_mux.data(),
             SLOT(addBuffer(const Buffer::Ptr, const bool)));
     connect(m_encoder.data(), SIGNAL(bufferReturned()), this, SLOT(bufferAvailable()));
@@ -81,6 +86,31 @@ void ScreenRecorder::bufferAvailable()
 
 void ScreenRecorder::start(float framerate)
 {
+    // Setup
+    const QAudioFormat format = static_cast<MuxMp4*>(m_mux.data())->audioFormat();
+    m_aacConverter = AacConverter(format.sampleRate(), format.channelCount());
+
+    // Audio capture
+    const QAudioDeviceInfo audioDevice(QAudioDeviceInfo::defaultInputDevice());
+    m_audioInput = QSharedPointer<QAudioInput>(new QAudioInput(audioDevice, format, this));
+    m_audioInput->setNotifyInterval(100);
+    connect(m_audioInput.data(), &QAudioInput::stateChanged, this,
+            [=](QAudio::State state){
+                qDebug() << "QAudioInput state changed:" << state;
+            }
+    );
+    connect(m_audioInput.data(), &QAudioInput::notify, this,
+            [=](){
+                const auto readBytes = m_microphoneAudio->readAll();
+                qDebug() << "Read" << readBytes.size() << "bytes";
+                // m_mux->addAudioBuffer(Buffer:Create(readBytes.constData(), readBytes.size()))
+                unsigned int bufSize;
+                uint8_t* aacBuf = (uint8_t*)m_aacConverter.encodeWav(readBytes.constData(), readBytes.size(), bufSize);
+                static_cast<MuxMp4*>(m_mux.data())->addAudioBuffer(Buffer::Create(aacBuf, bufSize));
+            }
+    );
+    m_microphoneAudio = QSharedPointer<QIODevice>(m_audioInput->start());
+
     m_frames = 0;
     m_timer.setInterval(static_cast<int>(1000.0f / framerate));
     m_elapsed.start();
@@ -88,10 +118,12 @@ void ScreenRecorder::start(float framerate)
     QMetaObject::invokeMethod(m_encoder.data(), "start", Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_capture.data(), "start", Qt::QueuedConnection);
     m_timer.start();
+    m_audioInput->resume();
 }
 
 void ScreenRecorder::stop()
 {
+    m_audioInput->stop();
     m_indicator->stop();
     m_timer.stop();
     m_elapsed.invalidate();
@@ -102,7 +134,7 @@ void ScreenRecorder::stop()
 void ScreenRecorder::tick()
 {
     m_frames += 1;
-    if (m_frames % 30 == 0) {
+    if (m_frames % 60 == 0) {
         qDebug() << "tick";
         m_indicator->updateElapsed(QTime::fromMSecsSinceStartOfDay(m_elapsed.elapsed()));
     }

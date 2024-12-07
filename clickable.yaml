@@ -8,6 +8,7 @@ dependencies_target:
 - android-headers-29
 - libhybris-dev
 - libavformat-dev
+- libavcodec-dev
 - libmessaging-menu-dev
 - liblomiri-url-dispatcher-dev
 skip_review: true

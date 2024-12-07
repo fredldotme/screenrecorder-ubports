@@ -22,11 +22,14 @@
 #include "encoders/encoder.h"
 #include "muxers/mux.h"
 #include "indicator.h"
+#include "aacconverter.h"
 #include <QObject>
 #include <QThread>
 #include <QSharedPointer>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QAudioInput>
+#include <QIODevice>
 
 class ScreenRecorder : public QObject
 {
@@ -49,6 +52,9 @@ private:
     QSharedPointer<QObject> m_encoder;
     QSharedPointer<QObject> m_capture;
     QSharedPointer<QObject> m_mux;
+    QSharedPointer<QAudioInput> m_audioInput;
+    QSharedPointer<QIODevice> m_microphoneAudio;
+    AacConverter m_aacConverter;
     QTimer m_timer;
     QSharedPointer<Indicator> m_indicator;
     QElapsedTimer m_elapsed;

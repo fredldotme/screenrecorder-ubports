@@ -19,6 +19,7 @@
 #define MUXERS_MP4_H
 
 #include <QObject>
+#include <QAudioFormat>
 #include <QFile>
 #include "../minimp4.h"
 #include "mux.h"
@@ -29,6 +30,7 @@ class MuxMp4 : public QObject, public Mux
     Q_INTERFACES(Mux)
 public:
     using QObject::QObject;
+    MuxMp4(QObject* parent = nullptr);
     ~MuxMp4();
 
 Q_SIGNALS:
@@ -36,14 +38,20 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig) override;
+    void addAudioBuffer(const Buffer::Ptr &buffer) override;
     void start(const QString fileName, const int width, const int height) override;
     void stop() override;
+
+public:
+    QAudioFormat audioFormat();
 
 private:
     bool m_running = false;
     QFile m_file;
     MP4E_mux_t *m_mux;
     mp4_h26x_writer_t m_mp4wr;
+    int m_trackId;
+    MP4E_track_t m_audioTrack;
 };
 
 #endif // MUXERS_MP4_H
