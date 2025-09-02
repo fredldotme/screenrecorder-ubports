@@ -39,7 +39,7 @@ public:
     void setup(QSharedPointer<QObject> encoder, QSharedPointer<QObject> capture,
                QSharedPointer<QObject> mux);
 public Q_SLOTS:
-    void start(float framerate);
+    void start(float framerate, bool mic);
     void stop();
     void bufferAvailable();
     void tick();
@@ -48,6 +48,7 @@ private:
     QThread m_captureThread;
     QThread m_encoderThread;
     QThread m_muxThread;
+    QThread m_audioThread;
     QThread m_indicatorThread;
     QSharedPointer<QObject> m_encoder;
     QSharedPointer<QObject> m_capture;
@@ -59,6 +60,7 @@ private:
     QSharedPointer<Indicator> m_indicator;
     QElapsedTimer m_elapsed;
     uint64_t m_frames;
+    bool m_mic;
 };
 
 #endif // SCREEN_RECORDER_H

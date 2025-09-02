@@ -38,13 +38,16 @@ Controller::Controller()
 
 Controller::~Controller() { }
 
-void Controller::start(float scale, float framerate)
+void Controller::start(float scale, float framerate, bool microphoneInput)
 {
     auto config = AndroidH264Encoder::defaultConfig();
     m_capture->init();
     config.width = m_capture->width();
     config.height = m_capture->height();
     config.output_scale = scale;
+    if (microphoneInput) {
+        m_mux->setupAudioTrack();
+    }
     m_encoder->configure(config);
 
     auto dir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
@@ -59,7 +62,7 @@ void Controller::start(float scale, float framerate)
                          .append(".mp4");
 
     m_mux->start(m_fileName, m_capture->width(), m_capture->height());
-    m_recorder.start(framerate);
+    m_recorder.start(framerate, microphoneInput);
 }
 
 void Controller::stop()

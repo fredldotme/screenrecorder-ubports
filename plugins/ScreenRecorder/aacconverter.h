@@ -9,8 +9,6 @@ class AacConverter {
 public:
 AacConverter() : audioCodec{nullptr}, codec{nullptr} {};
 AacConverter(const int sampleRate, const int channels) {
-    avcodec_register_all();
-
     // Set up audio encoder
     codec = avcodec_find_encoder(AV_CODEC_ID_AAC);
     if (codec == NULL)
@@ -18,9 +16,10 @@ AacConverter(const int sampleRate, const int channels) {
 
     audioCodec = avcodec_alloc_context3(codec);
     audioCodec->bit_rate = 128000;
-    audioCodec->sample_fmt = AV_SAMPLE_FMT_S16;
+    audioCodec->sample_fmt = AV_SAMPLE_FMT_FLTP;
     audioCodec->sample_rate = sampleRate;
-    audioCodec->channels = channels;
+    audioCodec->channel_layout = AV_CH_LAYOUT_STEREO;
+    audioCodec->channels = av_get_channel_layout_nb_channels(audioCodec->channel_layout);
     audioCodec->profile = FF_PROFILE_AAC_MAIN;
     audioCodec->time_base = (AVRational){1, sampleRate};
     audioCodec->codec_type = AVMEDIA_TYPE_AUDIO;

@@ -20,7 +20,7 @@ find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5QuickControls2 REQUIRED)
 
-pkg_check_modules(MIRCLIENT REQUIRED mirclient)
+pkg_check_modules(MIRCLIENT REQUIRED mir1client)
 pkg_check_modules(HYBRIS_MEDIA REQUIRED libmedia)
 pkg_check_modules(ANDROID_HEADERS REQUIRED android-headers-29)
 pkg_check_modules(LOMIRIURLDISPATCHER REQUIRED lomiri-url-dispatcher)
@@ -95,7 +95,7 @@ qt5_add_resources(QT_RESOURCES qml/qml.qrc)
 qt5_add_resources(QT_RESOURCES assets/assets.qrc)
 add_executable(${PROJECT_NAME} main.cpp ${QT_RESOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
-target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::Qml Qt5::Quick Qt5::QuickControls2 mirclient mircookie mircore)
+target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::Qml Qt5::Quick Qt5::QuickControls2 mir1client mir1cookie mir1core)
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 # Translations

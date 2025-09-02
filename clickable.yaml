@@ -1,9 +1,9 @@
-clickable_minimum_required: 7.1.2
+clickable_minimum_required: 8.4.0
 builder: cmake
 kill: screenrecorder
-framework: ubuntu-sdk-20.04
+framework: ubuntu-touch-24.04-1.x
 dependencies_target:
-- libmirclient-dev
+- libmir1client-dev
 - libmedia-dev
 - android-headers-29
 - libhybris-dev
