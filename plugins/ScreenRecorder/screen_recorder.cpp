@@ -104,6 +104,7 @@ void ScreenRecorder::start(float framerate, bool mic)
         );
         connect(m_audioInput.data(), &QAudioInput::notify, this,
             [=](){
+                qDebug() << "Reading microphone";
                 const auto readBytes = m_microphoneAudio->readAll();
                 qDebug() << "Read" << readBytes.size() << "bytes";
                 // m_mux->addAudioBuffer(Buffer:Create(readBytes.constData(), readBytes.size()))
