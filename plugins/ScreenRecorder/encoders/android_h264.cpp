@@ -33,7 +33,7 @@ static constexpr int32_t kOMXVideoIntraRefreshCyclic = 0;
 static constexpr int32_t kOMXVideoControlRateConstant = 2;
 // Supplying -1 as framerate means the encoder decides on which framerate
 // it provides.
-static constexpr int32_t kAnyFramerate = 30;
+static constexpr int32_t kAnyFramerate = 60;
 // Default is a bitrate of 25 MBit/s
 static constexpr int32_t kDefaultBitrate = 25000000;
 // From frameworks/av/include/media/stagefright/MediaErrors.h
@@ -141,7 +141,7 @@ void AndroidH264Encoder::configure(const Config &config)
     m_format->sliceHeight(height);
     m_format->colorFormat(kOMXColorFormatAndroidOpaque);
     // ↓ doesn't seem to work, on FP4 the resulting bitrate is ~8.7Mb/s
-    m_format->bitrate(config.bitrate);
+    m_format->bitrate(width * height * config.framerate * 0.1);
     m_format->bitrateMode(kOMXVideoControlRateConstant);
     m_format->framerate(config.framerate);
     //m_format->intraRefreshMode(kOMXVideoIntraRefreshCyclic);

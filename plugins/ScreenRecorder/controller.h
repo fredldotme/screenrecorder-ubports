@@ -33,7 +33,7 @@ public:
     Controller();
     ~Controller();
 
-    Q_INVOKABLE void start(float scale, float framerate);
+    Q_INVOKABLE void start(float scale, float framerate, bool microphoneInput);
     Q_INVOKABLE void stop();
     Q_INVOKABLE void cleanSpace();
 

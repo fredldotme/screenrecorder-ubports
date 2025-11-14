@@ -30,21 +30,25 @@ Controller::Controller()
     // make directory on launch so users can restart before starting a recording
     // TODO: remove once Lomiri does that itself
     QDir().mkpath(QFileInfo(INDICATOR_PATH).dir().absolutePath());
-    m_capture = QSharedPointer<CaptureMir>(new CaptureMir());
-    m_encoder = QSharedPointer<AndroidH264Encoder>(new AndroidH264Encoder());
-    m_mux = QSharedPointer<MuxMp4>(new MuxMp4());
-    m_recorder.setup(m_encoder, m_capture, m_mux);
 }
 
 Controller::~Controller() { }
 
-void Controller::start(float scale, float framerate)
+void Controller::start(float scale, float framerate, bool microphoneInput)
 {
+    m_capture = QSharedPointer<CaptureMir>(new CaptureMir());
+    m_encoder = QSharedPointer<AndroidH264Encoder>(new AndroidH264Encoder());
+    m_mux = QSharedPointer<MuxMp4>(new MuxMp4());
+    m_recorder.setup(m_encoder, m_capture, m_mux);
+
     auto config = AndroidH264Encoder::defaultConfig();
     m_capture->init();
     config.width = m_capture->width();
     config.height = m_capture->height();
     config.output_scale = scale;
+    if (microphoneInput) {
+        m_mux->setupAudioTrack();
+    }
     m_encoder->configure(config);
 
     auto dir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
@@ -59,7 +63,7 @@ void Controller::start(float scale, float framerate)
                          .append(".mp4");
 
     m_mux->start(m_fileName, m_capture->width(), m_capture->height());
-    m_recorder.start(framerate);
+    m_recorder.start(framerate, microphoneInput);
 }
 
 void Controller::stop()

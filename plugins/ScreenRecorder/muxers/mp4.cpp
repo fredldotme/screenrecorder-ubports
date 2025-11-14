@@ -27,7 +27,18 @@
 #include "../minimp4.h"
 
 QAudioFormat audioFormatCheck();
-inline static MP4E_track_t setupAudioTrack()
+
+MuxMp4::MuxMp4(QObject* parent) : QObject(parent), m_trackId{-1}
+{
+
+}
+
+MuxMp4::~MuxMp4()
+{
+    stop();
+}
+
+void MuxMp4::setupAudioTrack()
 {
     MP4E_track_t ret;
     QAudioFormat format = audioFormatCheck();
@@ -38,17 +49,8 @@ inline static MP4E_track_t setupAudioTrack()
     ret.default_duration = 0;
     ret.u.a.channelcount = format.channelCount();
 
-    return ret;
-}
-
-MuxMp4::MuxMp4(QObject* parent) : QObject(parent), m_audioTrack{setupAudioTrack()}
-{
-
-}
-
-MuxMp4::~MuxMp4()
-{
-    stop();
+    m_audioTrack = ret;
+    m_micAudio = true;
 }
 
 static int write_callback(int64_t offset, const void *buffer, size_t size, void *token)
@@ -65,7 +67,8 @@ void MuxMp4::start(const QString fileName, const int width, const int height)
     m_file.open(QIODevice::WriteOnly);
     m_mux = MP4E_open(0, 0, (void *)&m_file, write_callback);
 
-    m_trackId = MP4E_add_track(m_mux, &m_audioTrack);
+    if (m_micAudio)
+        m_trackId = MP4E_add_track(m_mux, &m_audioTrack);
 
     qDebug() << "before mp4_h26x_write_init";
 
@@ -119,6 +122,9 @@ void MuxMp4::addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig)
 
 void MuxMp4::addAudioBuffer(const Buffer::Ptr &buffer)
 {
+    if (m_trackId == -1)
+        return;
+
     MP4E_put_sample(m_mux, m_trackId, buffer->Data(), buffer->Length(), buffer->Timestamp(), MP4E_SAMPLE_DEFAULT);
 }
 

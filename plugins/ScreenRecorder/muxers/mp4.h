@@ -37,6 +37,7 @@ Q_SIGNALS:
     void frameAppended(int64_t timestamp) override;
 
 public Q_SLOTS:
+    void setupAudioTrack();
     void addBuffer(const Buffer::Ptr &buffer, const bool hasCodecConfig) override;
     void addAudioBuffer(const Buffer::Ptr &buffer) override;
     void start(const QString fileName, const int width, const int height) override;
@@ -47,6 +48,7 @@ public:
 
 private:
     bool m_running = false;
+    bool m_micAudio = false;
     QFile m_file;
     MP4E_mux_t *m_mux;
     mp4_h26x_writer_t m_mp4wr;
