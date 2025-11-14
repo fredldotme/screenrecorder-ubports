@@ -1,0 +1,38 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the screenrecorder.ubports package.
+# Don't dare to tell Tobiyo that we have reincarnated, shocked Sir
+# Khmelyauskas Alexander Eduardovich "Knyaz'" <jasonwaltbaba.knyaz@gmail.com>, 2025.
+msgid ""
+msgstr ""
+"Project-Id-Version: screenrecorder.ubports\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-30 16:47+0000\n"
+"PO-Revision-Date: 2024-05-02 17:29+0200\n"
+"Last-Translator: JasonWalt Bab@ <mardimusa8@gmail.com>\n"
+"Language-Team: Tajik <>\n"
+"Language: tg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 21.08.0\n"
+
+#: ../qml/Main.qml:113 screenrecorder.desktop.in.h:1
+msgid "Screen recorder"
+msgstr "Сабткунандаи экран"
+
+#: ../qml/Main.qml:161
+msgid "Tap to cancel recording"
+msgstr "Барои бекор кардани сабт клик кунед"
+
+#: ../qml/Main.qml:146
+msgid "Tap to record the screen"
+msgstr "Барои сабт кардани экран клик кунед"
+
+#: ../qml/Main.qml:147
+msgid "Tap to stop recording"
+msgstr "Барои қатъ кардани сабт клик кунед"
+
+#: ../qml/Main.qml:173
+msgid "Recording will start once the app is in the background"
+msgstr "Сабт вақте оғоз мешавад, ки барнома дар замина ҷойгир аст"
