@@ -9,11 +9,21 @@ class AacConverter {
 public:
 AacConverter() : ctx{nullptr}, codec{nullptr} {};
 AacConverter(const int sampleRate, const int channels) {
+    qDebug() << "Desired sample rate:" << sampleRate;
+
     // Set up audio encoder
     codec = avcodec_find_encoder(AV_CODEC_ID_AAC);
     if (codec == NULL) {
         qDebug() << "Failed to find AAC encoder";
         return;
+    }
+
+    int i = 0;
+    while (true) {
+        if (codec->supported_samplerates[i] == NULL)
+            break;
+        qDebug() << "Supported sample rate:" << codec->supported_samplerates[i];
+        ++i;
     }
 
     ctx = avcodec_alloc_context3(codec);
