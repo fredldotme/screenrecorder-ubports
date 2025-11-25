@@ -109,7 +109,8 @@ void Controller::cutVideo(const QString path, qint64 from, qint64 to)
     const QString editedFile = path + QStringLiteral("_cut.mp4");
 
     QStringList args;
-    args << "-ss" << QString::number(from / 1000)
+    args << "-y"
+         << "-ss" << QString::number(from / 1000)
          << "-to" << QString::number(to / 1000)
          << "-i" << path
          << "-c" << "copy" << editedFile;
