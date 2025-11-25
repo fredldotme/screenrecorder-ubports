@@ -29,6 +29,8 @@ class Controller : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool editing READ isEditing NOTIFY editingChanged)
+
 public:
     Controller();
     ~Controller();
@@ -36,16 +38,22 @@ public:
     Q_INVOKABLE void start(float scale, float framerate, bool microphoneInput);
     Q_INVOKABLE void stop();
     Q_INVOKABLE void cleanSpace();
+    Q_INVOKABLE void cutVideo(const QString path, qint64 from, qint64 to);
 
 Q_SIGNALS:
     void fileSaved(const QString path);
+    void editingChanged();
+    void editedFileSaved(const QString path);
 
 private:
+    bool isEditing();
+
     QSharedPointer<AndroidH264Encoder> m_encoder;
     QSharedPointer<CaptureMir> m_capture;
     QSharedPointer<MuxMp4> m_mux;
     ScreenRecorder m_recorder;
     QString m_fileName;
+    bool m_editing;
 };
 
 #endif // CONTROLLER_H

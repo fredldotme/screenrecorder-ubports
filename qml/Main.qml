@@ -15,14 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
+import QtQuick 2.15
 import Lomiri.Components 1.3
 import Lomiri.Components.Pickers 1.0
+import Lomiri.Components.Themes 1.3
 import Lomiri.Content 1.1
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.5 as QQC
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.12
 import QtGraphicalEffects 1.12
+import QtMultimedia 5.15
 import Qt.labs.settings 1.0
 import GSettings 1.0
 import LomiriScreenRecordController 1.0
@@ -122,6 +124,7 @@ MainView {
     Page {
         id: mainPage
         anchors.fill: parent
+        visible: true
 
         header: PageHeader {
             id: header
@@ -162,10 +165,10 @@ MainView {
 
             Label {
                 text: d.pendingDelayedRecording ?
-                            i18n.tr("Tap to cancel recording")
-                            : !recordingButton.recording ?
-                                i18n.tr("Tap to record the screen") :
-                                i18n.tr("Tap to stop recording")
+                          i18n.tr("Tap to cancel recording")
+                        : !recordingButton.recording ?
+                              i18n.tr("Tap to record the screen") :
+                              i18n.tr("Tap to stop recording")
                 font.pixelSize: units.gu(3.5)
                 wrapMode: Text.WordWrap
                 color: "white"
@@ -193,7 +196,7 @@ MainView {
                 }
             }
 
-/*
+            /*
             Label {
                 text: i18n.tr("Resolution scale (not working atm):")
                 color: "white"
@@ -277,7 +280,7 @@ MainView {
 
                     property bool recording : false
 
-                    BusyIndicator {
+                    QQC.BusyIndicator {
                         id: indicator
                         running: recordingButton.recording || d.pendingDelayedRecording
                         visible: running
@@ -302,55 +305,245 @@ MainView {
             }
         }
 
-        ContentPeerPicker {
-            id: picker
-            anchors.fill: parent
-            visible: false
-            showTitle: true
-            contentType: ContentType.Videos
-            handler: ContentHandler.Destination
-
-            property var activeTransfer : null
-            property string targetUrl : ""
-
-            ContentItem {
-                id: contentItem
-            }
-
-            onCancelPressed: {
-                picker.visible = false
-                Controller.cleanSpace();
-            }
-            onPeerSelected: {
-                peer.selectionType = ContentTransfer.Single
-                picker.activeTransfer = peer.request()
-                picker.activeTransfer.stateChanged.connect(function() {
-                    if (picker.activeTransfer.state === ContentTransfer.InProgress) {
-                        console.log("In progress");
-                        contentItem.url = picker.targetUrl
-                        contentItem.text = "recording_" + Date.now() + ".mp4"
-                        console.log("Transfering: " + contentItem.url + " " + contentItem.text)
-                        picker.activeTransfer.items = new Array
-                        picker.activeTransfer.items.push(contentItem)
-                        picker.activeTransfer.state = ContentTransfer.Charged;
-                    }
-                    if (picker.activeTransfer.state === ContentTransfer.Charged) {
-                        console.log("Charged");
-                        picker.activeTransfer = null
-                        Controller.cleanSpace();
-                    }
-                })
-                picker.visible = false
-            }
-        }
-
         Connections {
             target: Controller
 
             onFileSaved: {
-                picker.targetUrl = "file://" + path
-                picker.visible = true
+                cutPage.show(path)
             }
+        }
+    }
+
+    Page {
+        id: cutPage
+        anchors.fill: parent
+        visible: opacity > 0.0
+        opacity: 0.0
+
+        onVisibleChanged: {
+            if (!visible) {
+                video.stop();
+                cutPage.videoPath = "";
+                Controller.cleanSpace();
+            }
+        }
+
+        property string videoPath : ""
+
+        Behavior on opacity {
+            LomiriNumberAnimation {}
+        }
+
+        function show(path) {
+            videoPath = path
+            opacity = 1.0;
+        }
+
+        function hide() {
+            opacity = 0.0;
+        }
+
+        header: PageHeader {
+            id: cutPageHeader
+            title: i18n.tr("Edit video")
+            StyleHints {
+                foregroundColor: "white"
+                backgroundColor: "#213d3d"
+                dividerColor: "transparent"
+            }
+        }
+
+        RadialGradient {
+            anchors.fill: parent
+            angle: 45
+            horizontalOffset: 0 - (parent.width / 3)
+            verticalOffset: parent.height - (parent.height / 3)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#2b6f6f" }
+                GradientStop { position: 0.88; color: "#213d3d" }
+            }
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+
+            Rectangle {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: cutPageHeader.height + units.gu(3)
+                Layout.leftMargin: units.gu(3)
+                Layout.rightMargin: units.gu(3)
+                Layout.fillWidth: true
+                Layout.preferredHeight: {
+                    if (root.width > root.height)
+                        return (width * (root.width / root.height)) -
+                                cutPageHeader.height - units.gu(6)
+                    else
+                        return (width * (root.height / root.width)) -
+                                cutPageHeader.height - units.gu(6)
+                }
+                radius: units.gu(1)
+                color: "black"
+
+                Video {
+                    id: video
+                    anchors.fill: parent
+                    anchors.margins: units.gu(1)
+                    source: cutPage.videoPath !== "" ?
+                                "file://" + cutPage.videoPath :
+                                ""
+                    autoLoad: true
+                    autoPlay: true
+                    loops: MediaPlayer.Infinite
+                    notifyInterval: 1
+
+                    onSourceChanged: {
+                        if (cutPage.videoPath === "")
+                            return;
+
+                        videoRange.from = 0
+                        videoRange.first.value = 0
+                    }
+
+                    onDurationChanged: {
+                        if (cutPage.videoPath === "")
+                            return
+
+                        if (duration <= 0)
+                            return
+
+                        videoRange.to = video.duration
+                        videoRange.second.value = video.duration
+                    }
+
+                    onPositionChanged: {
+                        if (videoRange.second.value - 250 < position) {
+                            console.log("Triggering seek to: " + videoRange.first.value)
+                            video.seek(videoRange.first.value)
+                        }
+                    }
+
+                    onPlaybackStateChanged: {
+                        console.log("PlaybackState: " + playbackState)
+                    }
+                }
+            }
+
+            QQC.RangeSlider {
+                id: videoRange
+                Layout.alignment: Qt.AlignHCenter
+                Layout.leftMargin: units.gu(3)
+                Layout.rightMargin: units.gu(3)
+                Layout.fillWidth: true
+
+                stepSize: 1000.0
+                snapMode: QQC.RangeSlider.SnapAlways
+
+                first.onMoved: {
+                    if (cutPage.videoPath === "")
+                        return
+
+                    video.seek(videoRange.first.value)
+                }
+
+                second.onMoved: {
+                    if (cutPage.videoPath === "")
+                        return
+
+                    console.log("Set end of playback to: " + videoRange.second.value)
+                    video.seek(Math.max(videoRange.first.value,
+                                        videoRange.second.value - 2000))
+                }
+            }
+
+            Component.onCompleted: console.log("Ratio: " + (root.width / root.height))
+
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+                Layout.bottomMargin: units.gu(2)
+                spacing: units.gu(1)
+
+                Button {
+                    color: theme.palette.normal.negative
+                    text: i18n.tr("Delete")
+                    onClicked: {
+                        cutPage.hide()
+                    }
+                }
+                Button {
+                    color: theme.palette.normal.positive
+                    text: i18n.tr("Save")
+                    onClicked: {
+                        if (videoRange.first.value > 0 ||
+                                videoRange.second.value < video.duration - 500) {
+                            console.log("Saving cut video")
+                            Controller.cutVideo(cutPage.videoPath,
+                                                videoRange.first.value,
+                                                videoRange.second.value)
+                            return;
+                        }
+
+                        console.log("Saving uncut video")
+                        picker.targetUrl = "file://" + cutPage.videoPath
+                        picker.visible = true
+                    }
+                }
+
+                Connections {
+                    target: Controller
+                    function onEditedFileSaved(file) {
+                        picker.targetUrl = "file://" + file
+                        picker.visible = true
+                    }
+                }
+            }
+
+            QQC.BusyIndicator {
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                running: Controller.editing
+                visible: running
+            }
+        }
+    }
+
+    ContentPeerPicker {
+        id: picker
+        anchors.fill: parent
+        visible: false
+        showTitle: true
+        contentType: ContentType.Videos
+        handler: ContentHandler.Destination
+
+        property var activeTransfer : null
+        property string targetUrl : ""
+
+        ContentItem {
+            id: contentItem
+        }
+
+        onCancelPressed: {
+            picker.visible = false
+        }
+
+        onPeerSelected: {
+            peer.selectionType = ContentTransfer.Single
+            picker.activeTransfer = peer.request()
+            picker.activeTransfer.stateChanged.connect(function() {
+                if (picker.activeTransfer.state === ContentTransfer.InProgress) {
+                    console.log("In progress");
+                    contentItem.url = picker.targetUrl
+                    contentItem.text = "recording_" + Date.now() + ".mp4"
+                    console.log("Transfering: " + contentItem.url + " " + contentItem.text)
+                    picker.activeTransfer.items = new Array
+                    picker.activeTransfer.items.push(contentItem)
+                    picker.activeTransfer.state = ContentTransfer.Charged;
+                }
+                if (picker.activeTransfer.state === ContentTransfer.Charged) {
+                    console.log("Charged");
+                    picker.activeTransfer = null
+                }
+            })
+            picker.visible = false
+            cutPage.hide()
         }
     }
 

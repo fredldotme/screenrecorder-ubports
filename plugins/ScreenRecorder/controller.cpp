@@ -19,13 +19,26 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>
+#include <QProcess>
 #include <QStandardPaths>
 #include <chrono>
 
 #include "controller.h"
 #include "buffer.h"
 
-Controller::Controller()
+#if defined(__aarch64__)
+#define ARCH_TRIPLET "aarch64-linux-gnu"
+#elif defined(__arm__)
+#define ARCH_TRIPLET "arm-linux-gnueabihf"
+#elif defined(__x86_64__)
+#define ARCH_TRIPLET "x86_64-linux-gnu"
+#elif defined(__i386__)
+#define ARCH_TRIPLET "i386-linux-gnu"
+#else
+#error "No supported architecture detected"
+#endif
+
+Controller::Controller() : m_editing{false}
 {
     // make directory on launch so users can restart before starting a recording
     // TODO: remove once Lomiri does that itself
@@ -86,4 +99,41 @@ void Controller::cleanSpace()
         const auto path = it.next();
         qInfo() << "Deleting stale file" << path << QFile(path).remove();
     }
+}
+
+void Controller::cutVideo(const QString path, qint64 from, qint64 to)
+{
+    m_editing = true;
+    Q_EMIT editingChanged();
+
+    const QString editedFile = path + QStringLiteral("_cut.mp4");
+
+    QStringList args;
+    args << "-ss" << QString::number(from / 1000)
+         << "-to" << QString::number(to / 1000)
+         << "-i" << path
+         << "-c" << "copy" << editedFile;
+
+    QProcess ffmpeg;
+    connect(&ffmpeg, &QProcess::readyReadStandardOutput, this, [&]() {
+        qDebug() << ffmpeg.readAllStandardOutput();
+    }, Qt::DirectConnection);
+    connect(&ffmpeg, &QProcess::readyReadStandardError, this, [&]() {
+        qDebug() << ffmpeg.readAllStandardError();
+    }, Qt::DirectConnection);
+
+    static const QString ffmpegPath = QStringLiteral("./lib/" ARCH_TRIPLET "/bin/ffmpeg");
+    ffmpeg.start(ffmpegPath, args);
+    ffmpeg.waitForFinished();
+
+    m_editing = false;
+    Q_EMIT editingChanged();
+
+    if (ffmpeg.exitCode() == 0)
+        Q_EMIT editedFileSaved(editedFile);
+}
+
+bool Controller::isEditing()
+{
+    return m_editing;
 }

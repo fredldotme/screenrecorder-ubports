@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: screenrecorder.ubports\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-02 07:50+0000\n"
+"POT-Creation-Date: 2025-11-25 09:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../qml/Main.qml:128 screenrecorder.desktop.in.h:1
+#: ../qml/Main.qml:131 screenrecorder.desktop.in.h:1
 msgid "Screen recorder"
 msgstr ""
 
-#: ../qml/Main.qml:165
+#: ../qml/Main.qml:168
 msgid "Tap to cancel recording"
 msgstr ""
 
-#: ../qml/Main.qml:167
+#: ../qml/Main.qml:170
 msgid "Tap to record the screen"
 msgstr ""
 
-#: ../qml/Main.qml:168
+#: ../qml/Main.qml:171
 msgid "Tap to stop recording"
 msgstr ""
 
-#: ../qml/Main.qml:177
+#: ../qml/Main.qml:180
 msgid "Recording will start once the app is in the background"
+msgstr ""
+
+#: ../qml/Main.qml:348
+msgid "Edit video"
+msgstr ""
+
+#: ../qml/Main.qml:465
+msgid "Delete"
+msgstr ""
+
+#: ../qml/Main.qml:472
+msgid "Save"
 msgstr ""
