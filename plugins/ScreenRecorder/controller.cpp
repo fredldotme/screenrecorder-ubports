@@ -125,6 +125,9 @@ void Controller::cutVideo(const QString path, qint64 from, qint64 to)
 
     const QString editedFile = path + QStringLiteral("_cut.mp4");
 
+    // Correction to match seek playback start
+    from = std::max<qint64>(from - 1000, 0);
+
     QStringList args;
     args << "-y"
          << "-ss" << QString::number(from / 1000)
@@ -162,7 +165,7 @@ void Controller::mergeVideoAndAudio()
     args << "-y"
          << "-i" << m_tmpFileName
          << "-i" << m_tmpWavName
-         << "-c" << "copy"
+         << "-vcodec" << "copy"
          << m_fileName;
 
     QProcess ffmpeg;

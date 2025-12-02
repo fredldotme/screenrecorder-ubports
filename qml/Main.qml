@@ -111,6 +111,11 @@ MainView {
         schema.id: "com.canonical.qtmir"
     }
 
+    Settings {
+        id: settings
+        property alias microphoneAudio : microphoneAudioSwitch.checked
+    }
+
     Connections {
         target: Qt.application
         onStateChanged: {
