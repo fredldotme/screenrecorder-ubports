@@ -19,6 +19,7 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QProcess>
 #include <memory>
 #include "encoders/android_h264.h"
 #include "captures/mir.h"
@@ -47,13 +48,18 @@ Q_SIGNALS:
 
 private:
     bool isEditing();
+    void mergeVideoAndAudio();
 
     QSharedPointer<AndroidH264Encoder> m_encoder;
     QSharedPointer<CaptureMir> m_capture;
     QSharedPointer<MuxMp4> m_mux;
     ScreenRecorder m_recorder;
     QString m_fileName;
+    QString m_tmpFileName;
+    QString m_tmpWavName;
     bool m_editing;
+    bool m_micInput;
+    QProcess m_parecord;
 };
 
 #endif // CONTROLLER_H

@@ -86,6 +86,7 @@ void ScreenRecorder::bufferAvailable()
 
 void ScreenRecorder::start(float framerate, bool mic)
 {
+#if 0
     m_mic = mic;
     if (mic) {
         // Setup
@@ -119,6 +120,7 @@ void ScreenRecorder::start(float framerate, bool mic)
         );
         m_microphoneAudio = QSharedPointer<QIODevice>(m_audioInput->start());
     }
+#endif
 
     m_frames = 0;
     m_timer.setInterval(static_cast<int>(1000.0f / framerate));
@@ -127,14 +129,18 @@ void ScreenRecorder::start(float framerate, bool mic)
     QMetaObject::invokeMethod(m_encoder.data(), "start", Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_capture.data(), "start", Qt::QueuedConnection);
     m_timer.start();
+#if 0
     if (mic)
         m_audioInput->resume();
+#endif
 }
 
 void ScreenRecorder::stop()
 {
+#if 0
     if (m_mic)
         m_audioInput->stop();
+#endif
     m_indicator->stop();
     m_timer.stop();
     m_elapsed.invalidate();

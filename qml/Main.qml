@@ -80,7 +80,9 @@ MainView {
         function startRecording() {
             recordingButton.recording = true;
             d.setAppLifecycleExemption();
-            Controller.start(1.0/*resolution.checkedButton.value*/, 60/*fps.checkedButton.value*/, false /*microphoneInput*/);
+            Controller.start(1.0/*resolution.checkedButton.value*/,
+                             60/*fps.checkedButton.value*/,
+                             microphoneAudioSwitch.checked /*microphoneInput*/);
         }
 
         function startDelayedRecording() {
@@ -148,7 +150,7 @@ MainView {
         }
 
         ColumnLayout {
-            spacing: units.gu(2)
+            spacing: units.gu(2.5)
 
             anchors.centerIn: parent
 
@@ -263,6 +265,18 @@ MainView {
                 }
             }
 */
+
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                enabled: !(recordingButton.recording || d.pendingDelayedRecording)
+                Switch {
+                    id: microphoneAudioSwitch
+                }
+                Label {
+                    text: i18n.tr("Record microphone audio")
+                    color: "white"
+                }
+            }
 
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
