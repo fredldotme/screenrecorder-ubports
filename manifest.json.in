@@ -10,7 +10,7 @@
             "urls": "screenrecorder-urldispatcher.json"
         }
     },
-    "version": "2.0.0",
+    "version": "2.1.0",
     "maintainer": "UBports Foundation <dev@ubports.com>",
     "framework" : "@CLICK_FRAMEWORK@"
 }
