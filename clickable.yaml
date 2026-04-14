@@ -46,4 +46,5 @@ install_lib:
 - /usr/lib/${ARCH_TRIPLET}/libmbedcrypto.so*
 - /usr/lib/${ARCH_TRIPLET}/libcjson.so*
 - /usr/lib/${ARCH_TRIPLET}/libgfortran.so*
+- /usr/lib/${ARCH_TRIPLET}/libcdio.so.*
 skip_review: true
