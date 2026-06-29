@@ -81,7 +81,7 @@ MainView {
             recordingButton.recording = true;
             d.setAppLifecycleExemption();
             Controller.start(1.0/*resolution.checkedButton.value*/,
-                             60/*fps.checkedButton.value*/,
+                             30/*fps.checkedButton.value*/,
                              microphoneAudioSwitch.checked /*microphoneInput*/);
         }
 

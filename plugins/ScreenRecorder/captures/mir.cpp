@@ -150,7 +150,7 @@ void CaptureMir::start()
     qDebug() << "started mir capture";
     Q_EMIT started(m_displayMode->horizontal_resolution,
                    m_displayMode->vertical_resolution,
-                   m_displayMode->refresh_rate);
+                   30.0f /*m_displayMode->refresh_rate*/);
 }
 
 void CaptureMir::stop()

@@ -151,7 +151,7 @@ void ScreenRecorder::stop()
 void ScreenRecorder::tick()
 {
     m_frames += 1;
-    if (m_frames % 60 == 0) {
+    if (m_frames % m_timer.interval() == 0) {
         qDebug() << "tick";
         m_indicator->updateElapsed(QTime::fromMSecsSinceStartOfDay(m_elapsed.elapsed()));
     }

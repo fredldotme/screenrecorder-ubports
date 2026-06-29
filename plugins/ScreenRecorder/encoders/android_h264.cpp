@@ -33,7 +33,7 @@ static constexpr int32_t kOMXVideoIntraRefreshCyclic = 0;
 static constexpr int32_t kOMXVideoControlRateConstant = 2;
 // Supplying -1 as framerate means the encoder decides on which framerate
 // it provides.
-static constexpr int32_t kAnyFramerate = 60;
+static constexpr int32_t kAnyFramerate = 30;
 // Default is a bitrate of 25 MBit/s
 static constexpr int32_t kDefaultBitrate = 25000000;
 // From frameworks/av/include/media/stagefright/MediaErrors.h
