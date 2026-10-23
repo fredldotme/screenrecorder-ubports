@@ -12,14 +12,14 @@ dependencies_target:
 - libmessaging-menu-dev
 - liblomiri-url-dispatcher-dev
 - ffmpeg
+- libsdl2-2.0-0
 install_bin:
 - /usr/bin/ffmpeg
 install_lib:
-- /usr/lib/${ARCH_TRIPLET}/libavdevice.so*
-- /usr/lib/${ARCH_TRIPLET}/libavfilter.so*
-- /usr/lib/${ARCH_TRIPLET}/libavformat.so*
+- /usr/lib/${ARCH_TRIPLET}/libav*.so*
+- /usr/lib/${ARCH_TRIPLET}/libsw*.so*
+- /usr/lib/${ARCH_TRIPLET}/libvpx.so*
 - /usr/lib/${ARCH_TRIPLET}/libpostproc.so*
-- /usr/lib/${ARCH_TRIPLET}/libswscale.so*
 - /usr/lib/${ARCH_TRIPLET}/libcdio_paranoia.so*
 - /usr/lib/${ARCH_TRIPLET}/libcdio_cdda.so*
 - /usr/lib/${ARCH_TRIPLET}/libXv.so*
@@ -47,4 +47,12 @@ install_lib:
 - /usr/lib/${ARCH_TRIPLET}/libcjson.so*
 - /usr/lib/${ARCH_TRIPLET}/libgfortran.so*
 - /usr/lib/${ARCH_TRIPLET}/libcdio.so.*
+- /usr/lib/${ARCH_TRIPLET}/libjxl*.so*
+- /usr/lib/${ARCH_TRIPLET}/librav1e.so*
+- /usr/lib/${ARCH_TRIPLET}/libSvtAv1*.so*
+- /usr/lib/${ARCH_TRIPLET}/libtheora*.so*
+- /usr/lib/${ARCH_TRIPLET}/libx26*.so*
+- /usr/lib/${ARCH_TRIPLET}/libSDL2-2.0.so*
+- /usr/lib/${ARCH_TRIPLET}/libxml2.so*
+- /usr/lib/${ARCH_TRIPLET}/libicu*.so*
 skip_review: true
